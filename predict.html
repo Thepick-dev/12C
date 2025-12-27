@@ -36,19 +36,20 @@ body{
 
 .status{
   font-size:14px;
-  min-height:64px;
-  margin-bottom:24px;
+  min-height:72px;
+  margin-bottom:28px;
+  line-height:1.6;
 }
 
 .result{
-  font-size:18px;
+  font-size:20px;
   color:var(--yellow);
 }
 
 button{
   font-family:'Press Start 2P', monospace;
   font-size:12px;
-  padding:14px 20px;
+  padding:14px 22px;
   background:transparent;
   color:var(--cyan);
   border:4px solid var(--cyan);
@@ -73,63 +74,63 @@ button:disabled{
 'use strict';
 
 const PLAYERS = [
-  'MESSI',
-  'RONALDO',
-  'MBAPPÉ',
-  'HAALAND',
-  'SALAH',
-  'KANE',
-  'NEYMAR',
-  'BENZEMA',
-  'MODRIĆ',
-  'DE BRUYNE',
-  'VINÍCIUS',
-  'PEDRI',
-  'GRIEZMANN',
-  'BELLINGHAM',
-  'LEWANDOWSKI',
-  'SON',
-  'OSIMHEN',
-  'SAKA',
-  'RASHFORD',
-  'ALVAREZ'
+  'MESSI','RONALDO','MBAPPÉ','HAALAND','SALAH',
+  'KANE','NEYMAR','BENZEMA','MODRIĆ','DE BRUYNE',
+  'VINÍCIUS','PEDRI','GRIEZMANN','BELLINGHAM',
+  'LEWANDOWSKI','SON','OSIMHEN','SAKA',
+  'RASHFORD','ALVAREZ'
 ];
 
 const statusEl = document.getElementById('status');
 const submitBtn = document.getElementById('submitBtn');
 
-let shuffleInterval = null;
+let shuffleTimer = null;
+let ticks = 0;
+let finalPlayer = null;
 
-function pickRandomPlayer(){
+function pickRandom(){
   return PLAYERS[Math.floor(Math.random() * PLAYERS.length)];
 }
 
 function startShuffle(){
-  let ticks = 0;
   submitBtn.disabled = true;
-  statusEl.textContent = 'ALLOCATING PLAYER…';
+  ticks = 0;
+  finalPlayer = pickRandom();
 
-  shuffleInterval = setInterval(() => {
-    statusEl.textContent = pickRandomPlayer();
+  statusEl.textContent = 'ALLOCATING PLAYER';
+
+  shuffleTimer = setInterval(() => {
+    statusEl.textContent = pickRandom();
     ticks++;
 
-    if(ticks > 18){
-      stopShuffle();
+    // slow down near the end (NES-style tension)
+    if(ticks === 14){
+      clearInterval(shuffleTimer);
+      shuffleTimer = setInterval(shuffleTick, 160);
     }
-  }, 80);
+    if(ticks === 18){
+      clearInterval(shuffleTimer);
+      revealPlayer();
+    }
+  }, 70);
 }
 
-function stopShuffle(){
-  clearInterval(shuffleInterval);
+function shuffleTick(){
+  statusEl.textContent = pickRandom();
+  ticks++;
+}
 
-  const finalPlayer = pickRandomPlayer();
+function revealPlayer(){
+  // single hard flash AFTER decision
+  document.body.style.backgroundColor = '#FFFFFF';
 
-  // hard stop + flash
-  document.body.style.background = '#FFFFFF';
   setTimeout(() => {
-    document.body.style.background = 'var(--bg)';
-    statusEl.innerHTML = 'PLAYER ASSIGNED:<br><span class="result">' + finalPlayer + '</span>';
-  }, 80);
+    document.body.style.backgroundColor = 'var(--bg)';
+    statusEl.innerHTML =
+      'PLAYER ASSIGNED<br><span class="result">' +
+      finalPlayer +
+      '</span>';
+  }, 90);
 }
 
 submitBtn.addEventListener('click', startShuffle);
