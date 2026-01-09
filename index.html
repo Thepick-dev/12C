@@ -228,24 +228,6 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
     cursor: pointer;
 }
 .popup-btn:hover { background: #fff; }
-
-/* INTRO/LOCKED POPUP STYLES */
-#introModal {
-    border-color: var(--warn);
-    z-index: 2000;
-}
-.close-intro {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    color: var(--warn);
-    font-size: 16px;
-    cursor: pointer;
-    border: 1px solid var(--warn);
-    padding: 2px 6px;
-}
-.close-intro:hover { background: var(--warn); color: #000; }
-
 /* PROGRESS BAR STYLES */
 .progress-track {
     width: 100%;
@@ -318,7 +300,7 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
 @keyframes shake{0%,100%{transform:translate(0,0);}20%{transform:translate(-6px,0);}40%{transform:translate(6px,0);}60%{transform:translate(-4px,0);}80%{transform:translate(4px,0);}}
 /* FINAL POPUP */
 .submit-overlay{position:fixed;inset:0;background:rgba(5,5,16,0.98);display:none;align-items:center;justify-content:center;z-index:20;}
-.submit-box{max-width:900px;width:94%;border:4px solid var(--yellow);padding:20px;background:#000;}
+.submit-box{max-width:900px;width:94%;border:4px solid var(--yellow);padding:20px;background:#000; position: relative;}
 .submit-box h2{font-size:16px;color:var(--yellow);margin-bottom:14px;}
 .submit-box .details{font-size:9px;text-align:left;line-height:1.6;margin-bottom:16px;}
 .submit-box .hint{font-size:9px;color:var(--pink);margin-bottom:16px;}
@@ -331,20 +313,27 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
 .summary-item h5{color:var(--yellow);margin-bottom:6px;font-size:9px;}
 .summary-item span{display:block;margin-bottom:3px;font-size:8px;color:#fff;}
 .summary-item span.third{color:var(--pink);}
-/* UTILITIES */
-.hidden { display: none !important; }
+/* CLOSED WINDOW MODAL STYLES */
+.close-modal-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: transparent;
+    border: 1px solid var(--warn);
+    color: var(--warn);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 10px;
+    padding: 0;
+    margin: 0;
+}
+.close-modal-btn:hover { background: var(--warn); color: #000; }
 </style>
-</head> <body> 
-    
-<div id="introModal" class="arcade-popup" style="display:flex;">
-    <div class="close-intro" id="closeIntroBtn">X</div>
-    <div class="popup-msg" style="color:var(--warn); font-size:11px;">
-        THE SUBMISSION WINDOW WILL OPEN NEAR TO THE START OF THE TOURNAMENT.<br><br>
-        YOU CAN CLICK THROUGH THE PAGE TO UNDERSTAND THE GAME BUT YOUR SELECTIONS WILL NOT BE SUBMITTED AT THIS STAGE.
-    </div>
-</div>
-
-<div class="nav" id="nav">
+</head> <body> <div class="nav" id="nav">
   <a href="index.html">HOME</a>
   <a href="predict.html" class="active">PLAY</a>
   <a href="scores.html">SCORES</a>
@@ -360,9 +349,8 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
 </div>
 <input id="leaguePin" placeholder="LEAGUE PIN (OPTIONAL)">
 
-<button id="duoRevealBtn" disabled style="width:100%; margin:12px 0;">SELECT GOALSCORER DUO</button>
-
-<select id="combo" class="hidden">
+<button id="comboTrigger" style="width:100%; margin:12px 0;" disabled>CHOOSE GOALSCORER COMBINATION</button>
+<select id="combo" style="display:none;" disabled>
 <option value="">GOALSCORER COMBINATION</option>
 <option>Messi & Ronaldo</option>
 <option>Neymar & Mbappé</option>
@@ -384,7 +372,6 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
 <div class="sys prominent">SELECT 2ND PLACE IN EACH GROUP AND SELECT 8 THIRD-PLACE QUALIFIERS</div>
 <div class="groups-grid" id="groupsGrid"></div>
 </div> <button id="lockBtn" disabled>LOCK PICKS & PROCEED TO RANDOM PLAYER SELECTOR</button>
-
 <div id="arcadePopup" class="arcade-popup">
     <div class="popup-msg" id="popupMsg"></div>
     <div id="progressBarContainer" style="display:none; width:100%;">
@@ -414,19 +401,21 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
     <h2>PICKS SUBMITTED</h2>
     <div class="details" id="summary"></div>
     <div class="hint">Take a screenshot of this screen for your records.</div>
+    <div class="hint" style="color:var(--warn); margin-top:5px;">(SUBMISSION WINDOW IS CLOSED - DATA WAS NOT SENT)</div>
     <a href="index.html">RETURN TO HOME SCREEN</a>
   </div>
-</div> <script>
+</div> 
+
+<div class="submit-overlay" id="startOverlay" style="display:flex; z-index:9999;">
+  <div class="submit-box" style="border-color:var(--warn); box-shadow:0 0 30px var(--warn);">
+    <button class="close-modal-btn" onclick="document.getElementById('startOverlay').style.display='none'">x</button>
+    <h2 style="color:var(--warn); line-height:1.5;">SUBMISSION WINDOW CLOSED</h2>
+    <div class="details" style="font-size:11px; text-align:center;">THE SUBMISSION WINDOW WILL OPEN NEAR TO THE START OF THE TOURNAMENT. YOU CAN CLICK THROUGH THE PAGE TO UNDERSTAND THE GAME BUT YOUR SELECTIONS WILL NOT BE SUBMITTED AT THIS STAGE</div>
+  </div>
+</div>
+
+<script>
 'use strict';
-
-/* ---------- SUBMISSION LOCKED / INTRO POPUP ---------- */
-const introModal = document.getElementById('introModal');
-const closeIntroBtn = document.getElementById('closeIntroBtn');
-
-closeIntroBtn.onclick = () => {
-    introModal.style.display = 'none';
-}
-
 /* ---------- STAGE 1 ---------- */
 const usernameInput=document.getElementById('username'),
 emailInput=document.getElementById('email'),
@@ -435,7 +424,7 @@ termsCheck=document.getElementById('termsCheck'),
 marketingCheck=document.getElementById('marketingCheck'),
 leaguePinInput=document.getElementById('leaguePin'),
 comboSelect=document.getElementById('combo'),
-duoRevealBtn=document.getElementById('duoRevealBtn'), // New Button
+comboTrigger=document.getElementById('comboTrigger'), // New Trigger
 goalsInput=document.getElementById('goals'),
 s1msg=document.getElementById('s1msg'),
 lockBtn=document.getElementById('lockBtn'),
@@ -447,7 +436,7 @@ let tooltipTimeout;
 function showTooltip(msg, duration = 4000) {
     tooltipText.textContent = msg;
     infoTooltip.style.display = 'block';
-     
+    
     clearTimeout(tooltipTimeout);
     tooltipTimeout = setTimeout(() => {
         infoTooltip.style.display = 'none';
@@ -462,15 +451,30 @@ leaguePinInput.addEventListener('focus', () => {
     showTooltip('Join an existing league using a code or enter a new code and share it with your friends to set a league up!', 5000);
 });
 
-/* NEW DUO INTERACTION LOGIC */
-duoRevealBtn.onclick = () => {
-    // Show the popup explanation first
-    showPopup('These two players and your Bonus Player (chosen at the end) will earn points for you with goals and assists in the Group Stage.', false, 0, () => {
-        // This callback runs when "OK" is clicked on the popup
-        duoRevealBtn.classList.add('hidden'); // Hide the button
-        comboSelect.classList.remove('hidden'); // Show the dropdown
-        comboSelect.focus(); // Focus it
-    });
+// NEW LOGIC FOR COMBO INTERACTION
+emailInput.oninput=()=>{
+    // Enable the TRIGGER BUTTON instead of the select directly
+    if(emailInput.value.includes('@')) {
+        comboTrigger.disabled = false;
+    }
+    checkSubmit(); 
+}
+
+comboTrigger.onclick = () => {
+    // Show the arcade popup with instructions FIRST
+    showPopup("These two players and your Bonus Player (chosen at the end) will earn points for you with goals and assists in the Group Stage.", false);
+    
+    // Override the popup button action specifically for this flow
+    const oldAction = popupBtn.onclick; // Save original closer
+    popupBtn.onclick = () => {
+        popup.style.display = 'none';
+        // Hide trigger, show select
+        comboTrigger.style.display = 'none';
+        comboSelect.style.display = 'block';
+        comboSelect.disabled = false;
+        // Restore original close action for future errors
+        popupBtn.onclick = () => { popup.style.display = 'none'; }; 
+    };
 };
 
 // Goals input tooltip on focus
@@ -479,21 +483,6 @@ goalsInput.addEventListener('focus', () => {
 });
 usernameInput.oninput=()=>{
 if(usernameInput.value.length>2) emailInput.disabled=false; checkSubmit(); }
-
-emailInput.oninput=()=>{
-    // When email is valid, enable the REVEAL BUTTON, not the select directly yet
-    if(emailInput.value.includes('@')) {
-        duoRevealBtn.disabled = false;
-        // If they already revealed it, enable the select
-        if(!comboSelect.classList.contains('hidden')) {
-            comboSelect.disabled = false;
-        }
-    } else {
-        duoRevealBtn.disabled = true;
-        comboSelect.disabled = true;
-    }
-    checkSubmit(); 
-}
 
 privacyCheck.onchange=checkSubmit;
 termsCheck.onchange=checkSubmit;
@@ -530,32 +519,18 @@ const popupMsg = document.getElementById('popupMsg');
 const popupBtn = document.getElementById('popupBtn');
 const progressBarContainer = document.getElementById('progressBarContainer');
 const progressFill = document.getElementById('progressFill');
-
-// Callback for popup closure
-let onPopupClose = null;
-
-popupBtn.onclick = () => { 
-    popup.style.display = 'none'; 
-    if(onPopupClose) {
-        onPopupClose();
-        onPopupClose = null; // Reset
-    }
-};
-
-function showPopup(msg, isProgress=false, count=0, callback=null) {
+popupBtn.onclick = () => { popup.style.display = 'none'; };
+function showPopup(msg, isProgress=false, count=0) {
     popupMsg.textContent = msg;
     popup.style.display = 'flex';
     
-    // Set callback if provided
-    onPopupClose = callback;
-     
     if(isProgress) {
         popup.classList.add('progress-mode');
         popupBtn.style.display = 'none'; // Auto close for progress
         progressBarContainer.style.display = 'block';
         const pct = (count / MAX_THIRD) * 100;
         progressFill.style.width = pct + '%';
-         
+        
         // Auto hide after 1.5s
         setTimeout(() => {
             popup.style.display = 'none';
@@ -605,7 +580,7 @@ if(state.thirdPicks[group]===i){
     btn.classList.remove('selected-3'); 
     const newTotal = state.thirdPicks.filter(x=>x!==null).length;
     // Updated Popup Text per request
-    showPopup(`${newTotal} THIRD-PLACE TEAMS SELECTED, ${MAX_THIRD - newTotal} REMAINING`, true, newTotal);
+    showPopup`${newTotal} THIRD-PLACE TEAMS SELECTED, ${MAX_THIRD - newTotal} REMAINING`, true, newTotal);
 }
 else{
     // Selecting
@@ -613,11 +588,11 @@ else{
     btn.closest('.team-list').querySelectorAll('.selected-3').forEach(b=>b.classList.remove('selected-3'));
     state.thirdPicks[group]=i; 
     btn.classList.add('selected-3');
-     
+    
     // Trigger Progress Popup
     const newTotal = state.thirdPicks.filter(x=>x!==null).length;
     // Updated Popup Text per request
-    showPopup(`${newTotal} THIRD-PLACE TEAMS SELECTED, ${MAX_THIRD - newTotal} REMAINING`, true, newTotal);
+    showPopup`${newTotal} THIRD-PLACE TEAMS SELECTED, ${MAX_THIRD - newTotal} REMAINING`, true, newTotal);
 }
 checkSubmit();
 }
@@ -658,7 +633,7 @@ const boxes=document.querySelectorAll('.player-box');
 boxes[finalIndex].classList.add('selected');
 updateTwistText();
 }
-function updateTwistText(){ twistBtn.textContent=`TWIST (${twistsRemaining} REMAINING)`; }
+function updateTwistText(){ twistBtn.textContent`TWIST (${twistsRemaining} REMAINING)`; }
 function countdownThen(cb){
 let i=0,msg=['READY','SET','TWIST!'];
 const t=setInterval(()=>{
@@ -693,7 +668,7 @@ function runTwistAnimation(done){
   const interval = setInterval(() => {
     // Reset previous styles completely
     boxes.forEach(b => {
-      b.classList.remove('active');
+     b.classList.remove('active');
       b.style = ''; // Clear inline colors
     });
     // Pick a random neon color
@@ -709,11 +684,11 @@ function runTwistAnimation(done){
     topPlayerEl.textContent = b.textContent;
     // Check if done
     if(loops >= maxLoops && current === finalIndex) {
-      clearInterval(interval);
-      // Clean inline styles so the .selected class (gold) takes over
-      b.style = '';
-      b.classList.remove('active');
-      b.classList.add('selected');
+     clearInterval(interval);
+     // Clean inline styles so the .selected class (gold) takes over
+     b.style = '';
+     b.classList.remove('active');
+     b.classList.add('selected');
       done();
     } else {
       current++;
@@ -730,39 +705,42 @@ setTimeout(()=>topPlayerEl.classList.remove('shake'),350); }
 function showSummary(){
   setTimeout(()=>{
    overlay.style.display='none';
-    // 1. Gather Data for Sheet
+    
+    // SUBMISSION DISABLED PER REQUEST - DATA NOT SENT
+    /*
     const payload = {
         username: usernameInput.value,
         email: emailInput.value,
         leaguePin: leaguePinInput.value,
-        marketing: marketingCheck.checked, // Added Marketing Check
+        marketing: marketingCheck.checked, 
         combo: comboSelect.value,
         randomPlayer: finalPlayer,
         totalGoals: goalsInput.value,
         groupDetails: GROUPS.map((g, i) => ({
-            second: g[state.secondPicks[i]], // Send team name
+            second: g[state.secondPicks[i]], 
             third: state.thirdPicks[i] !== null ? g[state.thirdPicks[i]] : ""
         }))
     };
     
-    // 2. FETCH REMOVED FOR LOCKDOWN
-    // No data is sent.
+    const GOOGLE_SCRIPT_URL = "...";
+   fetch(GOOGLE_SCRIPT_URL, ...);
+   */
 
     // 3. Render Final UI (Original Code)
     const players=[...comboSelect.value.split('&').map(p=>p.trim().toUpperCase()),finalPlayer.toUpperCase()];
-    let html=`<div class="summary-header">USER: ${usernameInput.value}<br>EMAIL: ${emailInput.value}</div>`;
-    html+=`<div class="summary-players">PLAYERS: ${players.join(', ')}</div>`;
-    html+=`<div class="summary-grid">`;
+    let html`<div class="summary-header">USER: ${usernameInput.value}<br>EMAIL: ${emailInput.value}</div>`;
+    html+`<div class="summary-players">PLAYERS: ${players.join(', ')}</div>`;
+    html+`<div class="summary-grid">`;
    GROUPS.forEach((g,i)=>{
-      html+=`<div class="summary-item">`;
-     html+=`<h5>GROUP ${letters[i]}</h5>`;
-     html+=`<span>2ND: ${g[state.secondPicks[i]]}</span>`;
+      html+`<div class="summary-item">`;
+     html+`<h5>GROUP ${letters[i]}</h5>`;
+     html+`<span>2ND: ${g[state.secondPicks[i]]}</span>`;
      if(state.thirdPicks[i]!==null){
-        html+=`<span class="third">3RD: ${g[state.thirdPicks[i]]}</span>`;
+        html+`<span class="third">3RD: ${g[state.thirdPicks[i]]}</span>`;
       }
-     html+=`</div>`;
+     html+`</div>`;
     });
-   html+=`</div>`;
+   html+`</div>`;
    summaryEl.innerHTML=html;
    submitOverlay.style.display='flex';
   }, 800);
