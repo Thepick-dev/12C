@@ -1,3 +1,13 @@
+Here is the updated code.
+
+The following changes have been made:
+
+1. **Startup Popup:** Replaced the 'X' close button with an 'OK' button using the `.popup-btn` style.
+2. **Third-Place Qualifiers Popup:** Replaced the 'X' close button with an 'OK' button using the `.popup-btn` style.
+3. **Goalscorer Combo:** Removed the tooltip that appeared when selecting the combo (the focus event listener was removed).
+4. **Tooltips:** Reduced the duration of the tooltips for Username, League Pin, and Goals so they disappear faster.
+
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -353,19 +363,19 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
 <img src="banner1.jpg" class="banner" alt="GOALSTORM! Banner">
 
 <div id="startupPopup" class="arcade-popup" style="display:flex; border-color: var(--warn);">
-    <button class="popup-close-x" id="startupClose">✕</button>
     <div class="popup-msg" style="color:var(--warn); line-height:1.5;">
         THE SUBMISSION WINDOW WILL OPEN NEAR TO THE START OF THE TOURNAMENT.
         <br><br>
         YOU CAN CLICK THROUGH THE PAGE TO UNDERSTAND THE GAME BUT YOUR SELECTIONS WILL NOT BE SUBMITTED AT THIS STAGE.
     </div>
+    <button id="startupBtn" class="popup-btn">OK</button>
 </div>
 
 <div id="rulesPopup" class="arcade-popup" style="display:none; border-color: var(--yellow);">
-    <button class="popup-close-x" id="rulesClose">✕</button>
     <div class="popup-msg" style="color:var(--white); line-height:1.5; font-size:10px; text-align: justify;">
         THERE WILL BE 48 TEAMS PLAYING AT WORLD CUP 2026. TOP 2 TEAMS FROM EACH OF THE 12 GROUPS WILL QUALIFY AUTOMATICALLY FOR L32. THE 8 BEST THIRD-PLACED TEAMS IN THE GROUP STAGE (BASED ON POINTS, GOAL DIFFERENCE ETC) WILL QUALIFY FOR L32 WITH THE OTHER 4 THIRD-PLACED TEAMS EXITING THE TOURNAMENT. LONG LIVE INFANTINO! :D $$$$$
     </div>
+    <button id="rulesBtn" class="popup-btn">OK</button>
 </div>
 
 <div class="panel">
@@ -455,19 +465,19 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
 'use strict';
 /* ---------- STARTUP POPUP LOGIC ---------- */
 const startupPopup = document.getElementById('startupPopup');
-const startupClose = document.getElementById('startupClose');
-startupClose.onclick = () => { startupPopup.style.display = 'none'; };
+const startupBtn = document.getElementById('startupBtn');
+startupBtn.onclick = () => { startupPopup.style.display = 'none'; };
 
 /* ---------- RULES POPUP LOGIC (THIRD PLACE) ---------- */
 const rulesLink = document.getElementById('rulesLink');
 const rulesPopup = document.getElementById('rulesPopup');
-const rulesClose = document.getElementById('rulesClose');
+const rulesBtn = document.getElementById('rulesBtn');
 
 rulesLink.onclick = (e) => {
     e.preventDefault();
     rulesPopup.style.display = 'flex';
 };
-rulesClose.onclick = () => {
+rulesBtn.onclick = () => {
     rulesPopup.style.display = 'none';
 };
 
@@ -498,11 +508,11 @@ function showTooltip(msg, duration = 4000) {
     }, duration);
 }
 
-// Tooltips
-usernameInput.addEventListener('focus', () => showTooltip('USERNAME WILL BE PUBLICLY VIEWABLE', 3000));
-leaguePinInput.addEventListener('focus', () => showTooltip('Join an existing league using a code or enter a new code and share it with your friends!', 5000));
-comboSelect.addEventListener('focus', () => showTooltip('These two players and your Bonus Player will earn points for you with goals and assists.', 6000));
-goalsInput.addEventListener('focus', () => showTooltip('Enter total goals in all group stage matches - this is the tiebreaker.', 7000));
+// Tooltips (Durations Reduced)
+usernameInput.addEventListener('focus', () => showTooltip('USERNAME WILL BE PUBLICLY VIEWABLE', 2500));
+leaguePinInput.addEventListener('focus', () => showTooltip('Join an existing league using a code or enter a new code and share it with your friends!', 3500));
+// Removed comboSelect tooltip to prevent additional popup feel
+goalsInput.addEventListener('focus', () => showTooltip('Enter total goals in all group stage matches - this is the tiebreaker.', 4500));
 
 /* ---------- MASTER FLOW CONTROLLER ---------- */
 function updateTerminalState() {
@@ -826,3 +836,5 @@ function showSummary(){
 updateTerminalState();
 </script> </body>
 </html>
+
+```
