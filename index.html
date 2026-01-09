@@ -363,7 +363,7 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
 
 <div id="rulesPopup" class="arcade-popup" style="display:none; border-color: var(--yellow);">
     <button class="popup-close-x" id="rulesClose">✕</button>
-    <div class="popup-msg" style="color:var(--white); line-height:1.5; font-size:10px;">
+    <div class="popup-msg" style="color:var(--white); line-height:1.5; font-size:10px; text-align: justify;">
         THERE WILL BE 48 TEAMS PLAYING AT WORLD CUP 2026. TOP 2 TEAMS FROM EACH OF THE 12 GROUPS WILL QUALIFY FOR L32. THE 8 BEST THIRD-PLACED TEAMS IN THE GROUP STAGE (BASED ON POINTS, GOAL DIFFERENCE ETC) WILL QUALIFY FOR L32 WITH THE OTHER 4 THIRD-PLACED TEAMS EXITING THE TOURNAMENT. LONG LIVE INFANTINI! :D $$$$$
     </div>
 </div>
@@ -377,9 +377,9 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
 <input id="leaguePin" placeholder="LEAGUE PIN (OPTIONAL)" maxlength="4">
 
 <div class="terms-container">
-    <label><input type="checkbox" id="privacyCheck"> <span class="required-text">*REQUIRED:</span> I AGREE TO <a href="privacy.html">PRIVACY POLICY</a></label>
-    <label><input type="checkbox" id="termsCheck"> <span class="required-text">*REQUIRED:</span> I AGREE TO <a href="terms.html">TERMS OF USE</a></label>
-    <label><input type="checkbox" id="marketingCheck"> I WANT TO HEAR ABOUT FUTURE GOALSTORM COMPETITIONS (OPTIONAL)</label>
+    <label><input type="checkbox" id="privacyCheck"> <span><span class="required-text">*REQUIRED:</span> I AGREE TO <a href="privacy.html">PRIVACY POLICY</a></span></label>
+    <label><input type="checkbox" id="termsCheck"> <span><span class="required-text">*REQUIRED:</span> I AGREE TO <a href="terms.html">TERMS OF USE</a></span></label>
+    <label><input type="checkbox" id="marketingCheck"> <span>I WANT TO HEAR ABOUT FUTURE GOALSTORM COMPETITIONS (OPTIONAL)</span></label>
 </div>
 
 <div class="sys" id="s1msg">AWAITING PLAYER IDENTITY...</div>
@@ -405,7 +405,7 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
 
 <input id="goals" placeholder="COMPLETE TERMINAL ABOVE FIRST" type="number" disabled>
 <div class="sys intro">PICKING 1ST PLACE IS TOO EASY.</div>
-<div class="sys prominent">SELECT 2ND PLACE IN EACH GROUP AND SELECT 8 <a href="#" id="rulesLink" style="color:var(--yellow); text-decoration:underline; cursor:pointer;">THIRD-PLACE QUALIFIERS</a></div>
+<div class="sys prominent">SELECT 2ND PLACE IN EACH GROUP AND SELECT <a href="#" id="rulesLink" style="color:var(--yellow); text-decoration:underline; cursor:pointer;">8 THIRD-PLACE QUALIFIERS</a></div>
 <div class="groups-grid" id="groupsGrid"></div>
 </div> 
 
