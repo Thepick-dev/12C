@@ -1,3 +1,15 @@
+Here is the complete, single-file code.
+
+I have implemented a **Master State Controller** (`updateTerminalState`) that runs on every interaction. This ensures the flow is strictly sequential and self-correcting.
+
+**Key Changes Implemented:**
+
+1. **Dynamic Placeholders:** Disabled fields now explain *why* they are disabled inside the input box itself (e.g., "ENTER USERNAME FIRST").
+2. **Sequential Locking:** You cannot jump ahead. Changing an earlier field (like deleting the Username) re-locks later fields to prevent invalid states, but retains the data.
+3. **Phase Indicators:** The system message line (`#s1msg`) provides immediate, non-intrusive feedback when a phase is completed (e.g., "IDENTITY OK — SCORING UNLOCKED").
+4. **Submission Lock:** The data transmission (`fetch`) has been removed, and the summary screen now explicitly states that the window is closed.
+
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -74,15 +86,18 @@ h1{
     text-shadow:2px 2px 0px #000; 
     line-height: 1.4;
 }
-/* UPDATED TEXT STYLING PER REQUEST */
-.sys{margin:12px 0;font-size:12px;color:var(--warn);line-height:1.8;}
+/* SYSTEM TEXT STYLING */
+.sys{margin:12px 0;font-size:12px;color:var(--dim);line-height:1.8; min-height: 24px; transition: color 0.3s;}
+.sys.active { color: var(--neon); }
+.sys.complete { color: var(--ok); }
 .sys.prominent, .sys.intro {
-    color: var(--white); /* White text */
-    font-size: 14px; /* Larger font size */
+    color: var(--white);
+    font-size: 14px;
     text-shadow: 2px 2px 0 #000;
     line-height: 1.6;
 }
 .sys.intro { margin-bottom: 10px; }
+
 /* BANNER */
 .banner {
   max-width: 600px;
@@ -91,33 +106,40 @@ h1{
   display: block;
   margin-bottom: 20px;
 }
-/* INPUTS - INCREASED VISIBILITY & CONSISTENCY */
+
+/* INPUTS */
 input, select{
     width:100%;
     padding:14px;
     margin:12px 0;
-    background:#222; /* Slightly lighter background for visibility */
+    background:#222;
     color:#fff;
-    border:2px solid #777; /* More visible border */
+    border:2px solid #777;
     font-family:inherit;
     font-size:12px;
     outline: none;
-    opacity: 1; /* Force visible */
+    transition: all 0.3s ease;
 }
-input::placeholder { color: #aaa; } /* Brighter placeholder text */
+input::placeholder { color: #888; transition: color 0.3s; }
 input:focus, select:focus {
     border-color: var(--neon);
     background: #000;
     box-shadow: 0 0 8px rgba(0,246,255,0.4);
 }
-/* Ensure disabled inputs look exactly like active ones (consistent) */
+/* DISABLED STATES */
 input:disabled, select:disabled{
-    opacity: 1; 
-    border-color: #777;
-    background: #222;
+    opacity: 0.5; 
+    border-color: #444;
+    background: #151515;
     cursor: not-allowed;
-    color: #fff;
+    color: #888;
 }
+/* Specific style for disabled placeholders to act as instructions */
+input:disabled::placeholder {
+    color: var(--warn);
+    opacity: 0.8;
+}
+
 button{
     padding:12px 18px;
     margin:8px;
@@ -150,11 +172,12 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
 }
 .team-btn.selected-2{background:var(--ok);color:#000;border-color:var(--ok);box-shadow:0 0 8px var(--ok);}
 .team-btn.selected-3{background:var(--pink);color:#000;border-color:var(--pink);box-shadow:0 0 8px var(--pink);}
+
 /* TERMS & CONDITIONS CHECKBOXES */
 .terms-container {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Increased gap for better spacing */
+    gap: 15px;
     margin: 15px 0;
     align-items: flex-start;
     padding-left: 5px;
@@ -180,16 +203,9 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
     margin: 0;
     transform: scale(1.5);
     cursor: pointer;
-    border: 2px solid #777; /* Match input style */
+    border: 2px solid #777;
 }
-/* Input label styling */
-.input-label {
-    font-size: 10px;
-    color: #777;
-    text-align: left;
-    margin-bottom: 5px;
-    display: block;
-}
+
 /* ARCADE POPUP (ERROR & PROGRESS) */
 .arcade-popup {
     position: fixed;
@@ -228,6 +244,20 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
     cursor: pointer;
 }
 .popup-btn:hover { background: #fff; }
+
+/* POPUP CLOSE BUTTON (MINIMAL) */
+.popup-close-x {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 14px;
+    cursor: pointer;
+    font-family: sans-serif;
+}
+
 /* PROGRESS BAR STYLES */
 .progress-track {
     width: 100%;
@@ -298,13 +328,15 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
 .success{display:none;font-size:14px;color:var(--yellow);text-shadow:0 0 12px var(--yellow);}
 .shake{animation:shake 0.35s;}
 @keyframes shake{0%,100%{transform:translate(0,0);}20%{transform:translate(-6px,0);}40%{transform:translate(6px,0);}60%{transform:translate(-4px,0);}80%{transform:translate(4px,0);}}
+
 /* FINAL POPUP */
 .submit-overlay{position:fixed;inset:0;background:rgba(5,5,16,0.98);display:none;align-items:center;justify-content:center;z-index:20;}
-.submit-box{max-width:900px;width:94%;border:4px solid var(--yellow);padding:20px;background:#000; position:relative;}
+.submit-box{max-width:900px;width:94%;border:4px solid var(--yellow);padding:20px;background:#000;}
 .submit-box h2{font-size:16px;color:var(--yellow);margin-bottom:14px;}
 .submit-box .details{font-size:9px;text-align:left;line-height:1.6;margin-bottom:16px;}
 .submit-box .hint{font-size:9px;color:var(--pink);margin-bottom:16px;}
 .submit-box a{display:inline-block;margin-top:10px;color:var(--neon);text-decoration:none;border:2px solid var(--neon);padding:8px 10px;}
+
 /* SUMMARY GRID STYLES */
 .summary-header{border-bottom:1px solid var(--dim);padding-bottom:12px;margin-bottom:12px;}
 .summary-players{color:var(--neon);font-size:11px;margin-bottom:16px;line-height:1.5;}
@@ -313,65 +345,70 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
 .summary-item h5{color:var(--yellow);margin-bottom:6px;font-size:9px;}
 .summary-item span{display:block;margin-bottom:3px;font-size:8px;color:#fff;}
 .summary-item span.third{color:var(--pink);}
-/* CLOSE MODAL BTN */
-.close-modal-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: transparent;
-    border: 1px solid var(--warn);
-    color: var(--warn);
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 10px;
-    padding: 0;
-    margin: 0;
-}
-.close-modal-btn:hover { background: var(--warn); color: #000; }
 </style>
-</head> <body> <div class="nav" id="nav">
+</head> <body> 
+
+<div class="nav" id="nav">
   <a href="index.html">HOME</a>
   <a href="predict.html" class="active">PLAY</a>
   <a href="scores.html">SCORES</a>
   <a href="rules.html">RULES</a>
-</div>  <img src="banner1.jpg" class="banner" alt="GOALSTORM! Banner">  <div class="panel">
+</div>  
+
+<img src="banner1.jpg" class="banner" alt="GOALSTORM! Banner">
+
+<div id="startupPopup" class="arcade-popup" style="display:flex; border-color: var(--warn);">
+    <button class="popup-close-x" id="startupClose">✕</button>
+    <div class="popup-msg" style="color:var(--warn); line-height:1.5;">
+        THE SUBMISSION WINDOW WILL OPEN NEAR TO THE START OF THE TOURNAMENT.
+        <br><br>
+        YOU CAN CLICK THROUGH THE PAGE TO UNDERSTAND THE GAME BUT YOUR SELECTIONS WILL NOT BE SUBMITTED AT THIS STAGE.
+    </div>
+</div>
+
+<div class="panel">
 <h1>PLAYER ENTRY TERMINAL</h1>
-<input id="username" placeholder="USERNAME">
-<input id="email" placeholder="EMAIL" disabled>
+
+<input id="username" placeholder="USERNAME (REQUIRED)">
+<input id="email" placeholder="ENTER USERNAME FIRST" disabled>
+
+<input id="leaguePin" placeholder="LEAGUE PIN (OPTIONAL)" maxlength="4">
+
 <div class="terms-container">
     <label><input type="checkbox" id="privacyCheck"> <span class="required-text">*REQUIRED:</span> I AGREE TO PRIVACY POLICY</label>
     <label><input type="checkbox" id="termsCheck"> <span class="required-text">*REQUIRED:</span> I AGREE TO TERMS OF USE</label>
     <label><input type="checkbox" id="marketingCheck"> I WANT TO HEAR ABOUT FUTURE GOALSTORM COMPETITIONS (OPTIONAL)</label>
 </div>
-<input id="leaguePin" placeholder="LEAGUE PIN (OPTIONAL)">
 
 <button id="comboTrigger" style="width:100%; margin:12px 0;" disabled>CHOOSE GOALSCORER COMBINATION</button>
 <select id="combo" style="display:none;" disabled>
-<option value="">GOALSCORER COMBINATION</option>
-<option>Messi & Ronaldo</option>
-<option>Neymar & Mbappé</option>
-<option>Lewandowski & Haaland</option>
-<option>Salah & Mané</option>
-<option>Kane & Sterling</option>
-<option>Modrić & De Bruyne</option>
-<option>Mbappé & Benzema</option>
-<option>Son & Raphinha</option>
-<option>Haaland & De Bruyne</option>
-<option>Vinícius & Pedri</option>
+    <option value="">GOALSCORER COMBINATION</option>
+    <option>Messi & Ronaldo</option>
+    <option>Neymar & Mbappé</option>
+    <option>Lewandowski & Haaland</option>
+    <option>Salah & Mané</option>
+    <option>Kane & Sterling</option>
+    <option>Modrić & De Bruyne</option>
+    <option>Mbappé & Benzema</option>
+    <option>Son & Raphinha</option>
+    <option>Haaland & De Bruyne</option>
+    <option>Vinícius & Pedri</option>
 </select>
 
-<input id="goals" placeholder="TOTAL GROUP STAGE GOALS" type="number" disabled>
-<div class="sys" id="s1msg"></div>
-</div>  <div class="panel">
+<input id="goals" placeholder="ENTER IDENTITY FIRST" type="number" disabled>
+
+<div class="sys" id="s1msg">AWAITING PLAYER IDENTITY...</div>
+</div>  
+
+<div class="panel">
 <h1>ROUND 1</h1>
 <div class="sys intro">PICKING 1ST PLACE IS TOO EASY.</div>
 <div class="sys prominent">SELECT 2ND PLACE IN EACH GROUP AND SELECT 8 THIRD-PLACE QUALIFIERS</div>
 <div class="groups-grid" id="groupsGrid"></div>
-</div> <button id="lockBtn" disabled>LOCK PICKS & PROCEED TO RANDOM PLAYER SELECTOR</button>
+</div> 
+
+<button id="lockBtn" disabled>LOCK PICKS & PROCEED TO RANDOM PLAYER SELECTOR</button>
+
 <div id="arcadePopup" class="arcade-popup">
     <div class="popup-msg" id="popupMsg"></div>
     <div id="progressBarContainer" style="display:none; width:100%;">
@@ -381,9 +418,11 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
     </div>
     <button id="popupBtn" class="popup-btn">OK</button>
 </div>
+
 <div id="infoTooltip" class="info-tooltip">
     <div class="tooltip-text" id="tooltipText"></div>
 </div>
+
 <div class="overlay" id="overlay">
   <div class="modal">
     <div class="top-player" id="topPlayer"></div>
@@ -396,27 +435,28 @@ button:disabled{opacity:.35;border-color:var(--dim);color:var(--dim);cursor:not-
     <div class="info" id="info"></div>
     <div class="success" id="success">PICKS SUBMITTED!</div>
   </div>
-</div>  <div class="submit-overlay" id="submitOverlay">
+</div>  
+
+<div class="submit-overlay" id="submitOverlay">
   <div class="submit-box">
-    <h2>PICKS SUBMITTED</h2>
+    <h2>PICKS RECORDED</h2>
     <div class="details" id="summary"></div>
     <div class="hint">Take a screenshot of this screen for your records.</div>
-    <div class="hint" style="color:var(--warn); margin-top:5px;">(SUBMISSION WINDOW IS CLOSED - DATA WAS NOT SENT)</div>
+    <div class="hint" style="color:var(--warn); margin-top:10px; border-top:1px solid #333; padding-top:10px;">
+        NOTE: SUBMISSION WINDOW IS CURRENTLY CLOSED.<br>NO DATA WAS SENT TO THE SERVER.
+    </div>
     <a href="index.html">RETURN TO HOME SCREEN</a>
   </div>
-</div>
-
-<div class="submit-overlay" id="startOverlay" style="display:flex; z-index:9999;">
-  <div class="submit-box" style="border-color:var(--warn); box-shadow:0 0 30px var(--warn);">
-    <button class="close-modal-btn" onclick="document.getElementById('startOverlay').style.display='none'">x</button>
-    <h2 style="color:var(--warn); line-height:1.5;">SUBMISSION WINDOW CLOSED</h2>
-    <div class="details" style="font-size:11px; text-align:center;">THE SUBMISSION WINDOW WILL OPEN NEAR TO THE START OF THE TOURNAMENT. YOU CAN CLICK THROUGH THE PAGE TO UNDERSTAND THE GAME BUT YOUR SELECTIONS WILL NOT BE SUBMITTED AT THIS STAGE</div>
-  </div>
-</div>
+</div> 
 
 <script>
 'use strict';
-/* ---------- STAGE 1 ---------- */
+/* ---------- STARTUP POPUP LOGIC ---------- */
+const startupPopup = document.getElementById('startupPopup');
+const startupClose = document.getElementById('startupClose');
+startupClose.onclick = () => { startupPopup.style.display = 'none'; };
+
+/* ---------- STATE VARIABLES ---------- */
 const usernameInput=document.getElementById('username'),
 emailInput=document.getElementById('email'),
 privacyCheck=document.getElementById('privacyCheck'),
@@ -424,11 +464,12 @@ termsCheck=document.getElementById('termsCheck'),
 marketingCheck=document.getElementById('marketingCheck'),
 leaguePinInput=document.getElementById('leaguePin'),
 comboSelect=document.getElementById('combo'),
-comboTrigger=document.getElementById('comboTrigger'), // New Trigger
+comboTrigger=document.getElementById('comboTrigger'),
 goalsInput=document.getElementById('goals'),
 s1msg=document.getElementById('s1msg'),
 lockBtn=document.getElementById('lockBtn'),
 nav=document.getElementById('nav');
+
 // Info tooltip logic
 const infoTooltip = document.getElementById('infoTooltip');
 const tooltipText = document.getElementById('tooltipText');
@@ -436,64 +477,127 @@ let tooltipTimeout;
 function showTooltip(msg, duration = 4000) {
     tooltipText.textContent = msg;
     infoTooltip.style.display = 'block';
-    
     clearTimeout(tooltipTimeout);
     tooltipTimeout = setTimeout(() => {
         infoTooltip.style.display = 'none';
     }, duration);
 }
-// Username tooltip on focus
-usernameInput.addEventListener('focus', () => {
-    showTooltip('USERNAME WILL BE PUBLICLY VIEWABLE', 3000);
-});
-// League Pin tooltip on focus
-leaguePinInput.addEventListener('focus', () => {
-    showTooltip('Join an existing league using a code or enter a new code and share it with your friends to set a league up!', 5000);
-});
 
-// NEW LOGIC FOR COMBO INTERACTION
-emailInput.oninput=()=>{
-    // Enable the TRIGGER BUTTON instead of the select directly
-    if(emailInput.value.includes('@')) {
-        comboTrigger.disabled = false;
+// Tooltips
+usernameInput.addEventListener('focus', () => showTooltip('USERNAME WILL BE PUBLICLY VIEWABLE', 3000));
+leaguePinInput.addEventListener('focus', () => showTooltip('Join an existing league using a code or enter a new code and share it with your friends!', 5000));
+comboSelect.addEventListener('focus', () => showTooltip('These two players and your Bonus Player will earn points for you with goals and assists.', 6000));
+goalsInput.addEventListener('focus', () => showTooltip('Enter total goals in all group stage matches - this is the tiebreaker.', 7000));
+
+/* ---------- MASTER FLOW CONTROLLER ---------- */
+function updateTerminalState() {
+    const isNameValid = usernameInput.value.trim().length > 2;
+    const isEmailValid = emailInput.value.includes('@') && emailInput.value.includes('.');
+    const isComboSelected = comboSelect.value !== "";
+    const isGoalsValid = goalsInput.value > 0;
+    
+    // 1. IDENTITY PHASE
+    if (!isNameValid) {
+        // Lock downstream
+        emailInput.disabled = true;
+        emailInput.placeholder = "ENTER USERNAME FIRST";
+        
+        comboTrigger.disabled = true;
+        comboTrigger.innerText = "COMPLETE IDENTITY FIRST";
+        comboSelect.disabled = true;
+        
+        goalsInput.disabled = true;
+        goalsInput.placeholder = "COMPLETE IDENTITY FIRST";
+        
+        s1msg.textContent = "AWAITING PLAYER IDENTITY...";
+        s1msg.className = "sys";
+    } else {
+        // Unlock Email
+        emailInput.disabled = false;
+        emailInput.placeholder = "EMAIL ADDRESS (REQUIRED)";
+        
+        if (!isEmailValid) {
+            // Lock Scoring
+            comboTrigger.disabled = true;
+            comboTrigger.innerText = "ENTER VALID EMAIL FIRST";
+            comboSelect.disabled = true;
+            
+            goalsInput.disabled = true;
+            goalsInput.placeholder = "ENTER VALID EMAIL FIRST";
+            
+            s1msg.textContent = "PLEASE ENTER A VALID EMAIL...";
+            s1msg.className = "sys";
+        } else {
+            // 2. SCORING SETUP PHASE
+            // Check if combo explanation happened, we handle visual state here
+            if(comboSelect.style.display === 'none'){
+                comboTrigger.disabled = false;
+                comboTrigger.innerText = "CHOOSE GOALSCORER COMBINATION";
+            } else {
+                 comboSelect.disabled = false;
+            }
+
+            if (!isComboSelected) {
+                goalsInput.disabled = true;
+                goalsInput.placeholder = "SELECT COMBINATION FIRST";
+                s1msg.textContent = "IDENTITY CONFIRMED — SELECT SCORERS";
+                s1msg.className = "sys active";
+            } else {
+                goalsInput.disabled = false;
+                goalsInput.placeholder = "TOTAL GROUP STAGE GOALS";
+                
+                if (!isGoalsValid) {
+                    s1msg.textContent = "ENTER PREDICTED TOTAL GOALS";
+                    s1msg.className = "sys active";
+                } else {
+                    s1msg.textContent = "PLAYER DATA READY — COMPLETE GROUP PICKS";
+                    s1msg.className = "sys complete";
+                }
+            }
+        }
     }
-    checkSubmit(); 
+
+    // 4. LOCK BUTTON LOGIC
+    const termsAgreed = privacyCheck.checked && termsCheck.checked;
+    const secondComplete = state.secondPicks.every(x => x !== null);
+    const thirdComplete = state.thirdPicks.filter(x => x !== null).length === MAX_THIRD;
+    const terminalComplete = isNameValid && isEmailValid && isComboSelected && isGoalsValid;
+
+    lockBtn.disabled = !(terminalComplete && termsAgreed && secondComplete && thirdComplete);
 }
 
+// Bind all inputs to Master Controller
+usernameInput.addEventListener('input', updateTerminalState);
+emailInput.addEventListener('input', updateTerminalState);
+comboSelect.addEventListener('change', updateTerminalState);
+goalsInput.addEventListener('input', updateTerminalState);
+privacyCheck.addEventListener('change', updateTerminalState);
+termsCheck.addEventListener('change', updateTerminalState);
+
+// League Pin just needs max length check, doesn't block flow
+leaguePinInput.addEventListener('input', (e) => {
+    if(e.target.value.length > 4) e.target.value = e.target.value.slice(0,4);
+});
+
+// Combo Popup Logic
 comboTrigger.onclick = () => {
-    // Show the arcade popup with instructions FIRST
     showPopup("These two players and your Bonus Player (chosen at the end) will earn points for you with goals and assists in the Group Stage.", false);
     
-    // Override the popup button action specifically for this flow
-    const oldAction = popupBtn.onclick; // Save original closer
+    // Override popup OK button
+    const oldAction = popupBtn.onclick;
     popupBtn.onclick = () => {
         popup.style.display = 'none';
-        // Hide trigger, show select
         comboTrigger.style.display = 'none';
         comboSelect.style.display = 'block';
         comboSelect.disabled = false;
-        // Restore original close action for future errors
+        // Trigger generic state update
+        updateTerminalState();
+        // Restore default popup closer
         popupBtn.onclick = () => { popup.style.display = 'none'; }; 
     };
 };
 
-// Goals input tooltip on focus
-goalsInput.addEventListener('focus', () => {
-    showTooltip('Enter the total number of goals you think will be scored in all group stage matches - this will be the tiebreaker if one or more players are tied on points in Round 1.', 7000);
-});
-usernameInput.oninput=()=>{
-if(usernameInput.value.length>2) emailInput.disabled=false; checkSubmit(); }
-
-privacyCheck.onchange=checkSubmit;
-termsCheck.onchange=checkSubmit;
-// Marketing check is optional, doesn't trigger checkSubmit logic but we can leave it bound if needed
-marketingCheck.onchange=checkSubmit; 
-comboSelect.onchange=()=>{ if(comboSelect.value)
-goalsInput.disabled=false; checkSubmit(); }
-goalsInput.oninput=()=>{ if(goalsInput.value>0){
-s1msg.textContent='PLAYER DATA READY — COMPLETE GROUP PICKS'; checkSubmit(); }
-}
-/* ---------- STAGE 2 ---------- */
+/* ---------- STAGE 2 (GROUP PICKS) ---------- */
 const GROUPS=[ 
 ["MEXICO 🇲🇽","SOUTH AFRICA 🇿🇦","SOUTH KOREA 🇰🇷","DEN/MAC/CZE/IRL"],
 ["CANADA 🇨🇦","ITA/NIR/WAL/BOS","QATAR🇶🇦","SWITZERLAND🇨🇭"],
@@ -513,6 +617,7 @@ const MAX_THIRD=8;
 const state={ secondPicks:Array(GROUPS.length).fill(null),
 thirdPicks:Array(GROUPS.length).fill(null) };
 const groupsGrid=document.getElementById('groupsGrid');
+
 // POPUP LOGIC
 const popup = document.getElementById('arcadePopup');
 const popupMsg = document.getElementById('popupMsg');
@@ -520,6 +625,7 @@ const popupBtn = document.getElementById('popupBtn');
 const progressBarContainer = document.getElementById('progressBarContainer');
 const progressFill = document.getElementById('progressFill');
 popupBtn.onclick = () => { popup.style.display = 'none'; };
+
 function showPopup(msg, isProgress=false, count=0) {
     popupMsg.textContent = msg;
     popup.style.display = 'flex';
@@ -530,85 +636,71 @@ function showPopup(msg, isProgress=false, count=0) {
         progressBarContainer.style.display = 'block';
         const pct = (count / MAX_THIRD) * 100;
         progressFill.style.width = pct + '%';
-        
-        // Auto hide after 1.5s
-        setTimeout(() => {
-            popup.style.display = 'none';
-        }, 1500);
+        setTimeout(() => { popup.style.display = 'none'; }, 1500);
     } else {
         popup.classList.remove('progress-mode');
         popupBtn.style.display = 'block';
         progressBarContainer.style.display = 'none';
     }
 }
+
 function createGroupEl(groupIndex, teams){
-const g=document.createElement('div'); g.className='group';
-// FIXED SYNTAX ERROR: ADDED EQUALS SIGN
-g.innerHTML = `<h4>GROUP ${letters[groupIndex]}</h4><div class="team-list"></div>`;
-const list=g.querySelector('.team-list');
-teams.forEach((team,idx)=>{
-const row=document.createElement('div');
-row.className='team-row';
-const nameSpan=document.createElement('span');
-nameSpan.className='team-name'; nameSpan.textContent=team;
-const btn2=document.createElement('button');
-btn2.className='team-btn'; btn2.textContent='2nd';
-btn2.onclick=()=>toggleSecond(groupIndex,idx,btn2);
-const btn3=document.createElement('button');
-btn3.className='team-btn'; btn3.textContent='3rd';
-btn3.onclick=()=>toggleThird(groupIndex,idx,btn3);
-row.append(nameSpan,btn2,btn3); list.appendChild(row);
-});
-return g;
+    const g=document.createElement('div'); g.className='group';
+    g.innerHTML = `<h4>GROUP ${letters[groupIndex]}</h4><div class="team-list"></div>`;
+    const list=g.querySelector('.team-list');
+    teams.forEach((team,idx)=>{
+        const row=document.createElement('div');
+        row.className='team-row';
+        const nameSpan=document.createElement('span');
+        nameSpan.className='team-name'; nameSpan.textContent=team;
+        const btn2=document.createElement('button');
+        btn2.className='team-btn'; btn2.textContent='2nd';
+        btn2.onclick=()=>toggleSecond(groupIndex,idx,btn2);
+        const btn3=document.createElement('button');
+        btn3.className='team-btn'; btn3.textContent='3rd';
+        btn3.onclick=()=>toggleThird(groupIndex,idx,btn3);
+        row.append(nameSpan,btn2,btn3); list.appendChild(row);
+    });
+    return g;
 }
+
 function renderGroups(){ groupsGrid.innerHTML='';
 GROUPS.forEach((g,i)=>groupsGrid.appendChild(createGroupEl(i,g))); }
 renderGroups();
+
 function toggleSecond(group,i,btn){
-if(state.thirdPicks[group]===i){ showPopup('ERROR: Team already selected as 3rd-place'); return; }
-state.secondPicks[group]=state.secondPicks[group]===i?null:i;
-btn.closest('.team-list').querySelectorAll('.selected-2').forEach(b=>b.classList.remove('selected-2'));
-if(state.secondPicks[group]===i)
-btn.classList.add('selected-2');
-checkSubmit();
+    if(state.thirdPicks[group]===i){ showPopup('ERROR: Team already selected as 3rd-place'); return; }
+    state.secondPicks[group]=state.secondPicks[group]===i?null:i;
+    btn.closest('.team-list').querySelectorAll('.selected-2').forEach(b=>b.classList.remove('selected-2'));
+    if(state.secondPicks[group]===i) btn.classList.add('selected-2');
+    updateTerminalState();
 }
+
 function toggleThird(group,i,btn){
-if(state.secondPicks[group]===i){ showPopup('ERROR: Team already selected as 2nd-place'); return; }
-const total=state.thirdPicks.filter(x=>x!==null).length;
-// Deselecting
-if(state.thirdPicks[group]===i){
-    state.thirdPicks[group]=null; 
-    btn.classList.remove('selected-3'); 
-    const newTotal = state.thirdPicks.filter(x=>x!==null).length;
-    // Updated Popup Text per request
-    showPopup(`${newTotal} THIRD-PLACE TEAMS SELECTED, ${MAX_THIRD - newTotal} REMAINING`, true, newTotal);
+    if(state.secondPicks[group]===i){ showPopup('ERROR: Team already selected as 2nd-place'); return; }
+    const total=state.thirdPicks.filter(x=>x!==null).length;
+    // Deselecting
+    if(state.thirdPicks[group]===i){
+        state.thirdPicks[group]=null; 
+        btn.classList.remove('selected-3'); 
+        const newTotal = state.thirdPicks.filter(x=>x!==null).length;
+        showPopup(`${newTotal} THIRD-PLACE TEAMS SELECTED, ${MAX_THIRD - newTotal} REMAINING`, true, newTotal);
+    }
+    else{
+        // Selecting
+        if(total>=MAX_THIRD){ showPopup('ERROR: YOU HAVE ALREADY SELECTED 8 THIRD-PLACE QUALIFIERS'); return; }
+        btn.closest('.team-list').querySelectorAll('.selected-3').forEach(b=>b.classList.remove('selected-3'));
+        state.thirdPicks[group]=i; 
+        btn.classList.add('selected-3');
+        const newTotal = state.thirdPicks.filter(x=>x!==null).length;
+        showPopup(`${newTotal} THIRD-PLACE TEAMS SELECTED, ${MAX_THIRD - newTotal} REMAINING`, true, newTotal);
+    }
+    updateTerminalState();
 }
-else{
-    // Selecting
-    if(total>=MAX_THIRD){ showPopup('ERROR: YOU HAVE ALREADY SELECTED 8 THIRD-PLACE QUALIFIERS'); return; }
-    btn.closest('.team-list').querySelectorAll('.selected-3').forEach(b=>b.classList.remove('selected-3'));
-    state.thirdPicks[group]=i; 
-    btn.classList.add('selected-3');
-    
-    // Trigger Progress Popup
-    const newTotal = state.thirdPicks.filter(x=>x!==null).length;
-    // Updated Popup Text per request
-    showPopup(`${newTotal} THIRD-PLACE TEAMS SELECTED, ${MAX_THIRD - newTotal} REMAINING`, true, newTotal);
-}
-checkSubmit();
-}
-function checkSubmit(){
-const allFilled=usernameInput.value && emailInput.value && comboSelect.value && goalsInput.value;
-const termsAgreed = privacyCheck.checked && termsCheck.checked;
-const secondComplete=state.secondPicks.every(x=>x!==null);
-const thirdComplete=state.thirdPicks.filter(x=>x!==null).length===MAX_THIRD;
-// Marketing check is NOT included here as it is optional
-lockBtn.disabled=!(allFilled && termsAgreed && secondComplete && thirdComplete);
-}
+
 /* ---------- RANDOM SELECTOR LOGIC ---------- */
 const PLAYERS=['MESSI','RONALDO','MBAPPÉ','HAALAND','SALAH','KANE','NEYMAR','BENZEMA','MODRIĆ','DE BRUYNE','VINÍCIUS','PEDRI','GRIEZMANN','BELLINGHAM','LEWANDOWSKI','SON','OSIMHEN','SAKA','RASHFORD','ALVAREZ','GREALISH','FODEN','ØDEGAARD','MUSIALA','KVARA','VALVERDE','DIMARIA','LUKAKU','DAVIES','RODRI'];
 let twistsRemaining=2, finalPlayer=null, finalIndex=null, locked=false;
-// Palette of possible neon colors for the cycle
 const NEON_COLORS = ['#00F6FF', '#FF2FC7', '#22FF88', '#FFD60A', '#B026FF', '#FF5E00'];
 const overlay=document.getElementById('overlay'),
 gridEl=document.getElementById('grid'),
@@ -617,76 +709,70 @@ stickBtn=document.getElementById('stickBtn'),
 twistBtn=document.getElementById('twistBtn'),
 submitOverlay=document.getElementById('submitOverlay'),
 summaryEl=document.getElementById('summary');
+
 lockBtn.onclick=()=>{ nav.style.display='none';
 overlay.style.display='flex'; initRandomPlayer(); };
+
 function initRandomPlayer(){
-gridEl.innerHTML=''; twistsRemaining=2; locked=false;
-// Create grid
-PLAYERS.forEach(n=>{ const
-d=document.createElement('div'); d.className='player-box'; d.textContent=n;
-gridEl.appendChild(d); });
-// Pick initial instantly
-finalIndex=Math.floor(Math.random()*PLAYERS.length);
-finalPlayer=PLAYERS[finalIndex];
-topPlayerEl.textContent=finalPlayer;
-// Highlight in grid instantly
-const boxes=document.querySelectorAll('.player-box');
-boxes[finalIndex].classList.add('selected');
-updateTwistText();
+    gridEl.innerHTML=''; twistsRemaining=2; locked=false;
+    PLAYERS.forEach(n=>{ const
+    d=document.createElement('div'); d.className='player-box'; d.textContent=n;
+    gridEl.appendChild(d); });
+    finalIndex=Math.floor(Math.random()*PLAYERS.length);
+    finalPlayer=PLAYERS[finalIndex];
+    topPlayerEl.textContent=finalPlayer;
+    const boxes=document.querySelectorAll('.player-box');
+    boxes[finalIndex].classList.add('selected');
+    updateTwistText();
 }
-function updateTwistText(){ twistBtn.textContent`TWIST (${twistsRemaining} REMAINING)`; }
+
+function updateTwistText(){ twistBtn.textContent=`TWIST (${twistsRemaining} REMAINING)`; }
 function countdownThen(cb){
-let i=0,msg=['READY','SET','TWIST!'];
-const t=setInterval(()=>{
-topPlayerEl.textContent=msg[i++]; if(i===msg.length){ clearInterval(t); cb();
-}},250);
+    let i=0,msg=['READY','SET','TWIST!'];
+    const t=setInterval(()=>{
+    topPlayerEl.textContent=msg[i++]; if(i===msg.length){ clearInterval(t); cb();
+    }},250);
 }
+
 stickBtn.onclick=()=>{ if(locked) return; locked=true;
 freezeFrame(); showSummary(); };
+
 twistBtn.onclick=()=>{
  if(locked||twistsRemaining===0) return;
   twistsRemaining--;
-updateTwistText();
-  // Clean grid for animation (remove selected class and clear inline styles)
+  updateTwistText();
  document.querySelectorAll('.player-box').forEach(b=>{
    b.classList.remove('selected','active');
     b.style='';
   });
-  // Decide winner
  finalIndex=Math.floor(Math.random()*PLAYERS.length);
  finalPlayer=PLAYERS[finalIndex];
-  // Run
  countdownThen(()=>runTwistAnimation(()=>{
    topPlayerEl.textContent=finalPlayer;
    if(twistsRemaining===0){ locked=true; freezeFrame(); showSummary(); }
   }));
 };
+
 function runTwistAnimation(done){
   const boxes = document.querySelectorAll('.player-box');
   let current = 0;
   let loops = 0;
-  const maxLoops = 2; // Number of full cycles around the grid
+  const maxLoops = 2; 
   const interval = setInterval(() => {
-    // Reset previous styles completely
     boxes.forEach(b => {
      b.classList.remove('active');
-      b.style = ''; // Clear inline colors
+      b.style = ''; 
     });
-    // Pick a random neon color
     const randomColor = NEON_COLORS[Math.floor(Math.random() * NEON_COLORS.length)];
-    // Light up current with dynamic color
     const b = boxes[current];
     b.classList.add('active');
     b.style.background = randomColor;
     b.style.borderColor = randomColor;
     b.style.boxShadow = `0 0 15px ${randomColor}`;
-    b.style.color = '#000'; // Black text for contrast on neon
-    // Update text to match lighting box
+    b.style.color = '#000';
     topPlayerEl.textContent = b.textContent;
-    // Check if done
     if(loops >= maxLoops && current === finalIndex) {
      clearInterval(interval);
-     // Clean inline styles so the .selected class (gold) takes over
      b.style = '';
      b.classList.remove('active');
      b.classList.add('selected');
@@ -698,39 +784,21 @@ function runTwistAnimation(done){
         loops++;
       }
     }
-  }, 50); // Speed of cycle
+  }, 50); 
 }
+
 function freezeFrame(){ topPlayerEl.classList.add('shake');
 setTimeout(()=>topPlayerEl.classList.remove('shake'),350); }
+
 /* ---------- SUBMIT FUNCTION ---------- */
 function showSummary(){
   setTimeout(()=>{
    overlay.style.display='none';
     
-    // SUBMISSION DISABLED PER REQUEST - DATA NOT SENT
-    /*
-    const payload = {
-        username: usernameInput.value,
-        email: emailInput.value,
-        leaguePin: leaguePinInput.value,
-        marketing: marketingCheck.checked, 
-        combo: comboSelect.value,
-        randomPlayer: finalPlayer,
-        totalGoals: goalsInput.value,
-        groupDetails: GROUPS.map((g, i) => ({
-            second: g[state.secondPicks[i]], 
-            third: state.thirdPicks[i] !== null ? g[state.thirdPicks[i]] : ""
-        }))
-    };
+    // FETCH REMOVED - SUBMISSION LOCKED 
     
-    const GOOGLE_SCRIPT_URL = "...";
-   fetch(GOOGLE_SCRIPT_URL, ...);
-   */
-
-    // 3. Render Final UI
     const players=[...comboSelect.value.split('&').map(p=>p.trim().toUpperCase()),finalPlayer.toUpperCase()];
     
-    // FIXED SYNTAX ERROR: ADDED EQUALS SIGNS AND CONCATENATION
     let html = `<div class="summary-header">USER: ${usernameInput.value}<br>EMAIL: ${emailInput.value}</div>`;
     html += `<div class="summary-players">PLAYERS: ${players.join(', ')}</div>`;
     html += `<div class="summary-grid">`;
@@ -748,5 +816,10 @@ function showSummary(){
    submitOverlay.style.display='flex';
   }, 800);
 }
+
+// Initial state check
+updateTerminalState();
 </script> </body>
 </html>
+
+```
