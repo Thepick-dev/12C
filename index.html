@@ -1,15 +1,3 @@
-Here is the complete, single-file code.
-
-I have implemented a **Master State Controller** (`updateTerminalState`) that runs on every interaction. This ensures the flow is strictly sequential and self-correcting.
-
-**Key Changes Implemented:**
-
-1. **Dynamic Placeholders:** Disabled fields now explain *why* they are disabled inside the input box itself (e.g., "ENTER USERNAME FIRST").
-2. **Sequential Locking:** You cannot jump ahead. Changing an earlier field (like deleting the Username) re-locks later fields to prevent invalid states, but retains the data.
-3. **Phase Indicators:** The system message line (`#s1msg`) provides immediate, non-intrusive feedback when a phase is completed (e.g., "IDENTITY OK — SCORING UNLOCKED").
-4. **Submission Lock:** The data transmission (`fetch`) has been removed, and the summary screen now explicitly states that the window is closed.
-
-```html
 <!doctype html>
 <html lang="en">
 <head>
