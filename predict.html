@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>GOALSTORM! — ARCADE EDITION</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+/* DIRECTION A: HOT ARCADE PALETTE */
+:root{
+  --bg:#0b0b1f;       /* Deep Indigo */
+  --panel:#151525;    /* Slightly lighter panel */
+  --pink:#ff0055;     /* HOT PINK (Action) */
+  --yellow:#ffd60a;   /* ELECTRIC YELLOW (Text/Highlight) */
+  --cyan:#00f6ff;     /* CYAN (Borders/Accents) */
+  --white:#ffffff;
+  --dim:#555;
+  --shadow: 4px 4px 0px 0px #000; /* Hard Arcade Shadow */
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body{
+    margin:0;
+    background-color: var(--bg);
+    /* Subtle grid pattern in background */
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    color: var(--white);
+    font-family:"VT323", monospace;
+    font-size: 20px; 
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    min-height: 100vh;
+    padding-bottom: 40px;
+}
+
+/* 1. NAV - CHUNKY ARCADE BUTTONS */
+.nav {
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  justify-content: space-between;
+  margin: 20px auto 10px;
+  padding: 0 10px;
+  gap: 10px;
+}
+.nav a {
+  flex: 1;
+  font-family: "Press Start 2P", cursive;
+  font-size: 10px;
+  padding: 15px 5px;
+  color: var(--white);
+  text-decoration: none;
+  background: #222;
+  border: 2px solid var(--white);
+  box-shadow: var(--shadow); /* Hard 3D shadow */
+  text-transform: uppercase;
+  transition: all 0.1s;
+  display: flex; align-items: center; justify-content: center;
+}
+.nav a:hover {
+    background: var(--yellow);
+    color: #000;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px #000;
+}
+.nav a:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px 0px #000;
+}
+.nav a.active { 
+  background: var(--pink);
+  color: #fff;
+  border-color: var(--pink);
+}
+
+/* 2. HERO BANNER - SYNTHWAVE STYLE */
+.hero-section {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+    height: 160px; 
+    background-color: #1a0b2e;
+    /* Retro Sunset Gradient + Grid Floor */
+    background-image: 
+        linear-gradient(to bottom, rgba(0,0,0,0) 60%, var(--pink) 100%),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 100%;
+    margin: 15px auto 25px;
+    border: 4px solid var(--white);
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.hero-content { z-index: 3; text-align: center; transform: skew(-3deg); }
+
+.glitch {
+    font-family: "Press Start 2P", cursive;
+    font-size: 42px; 
+    color: var(--yellow);
+    text-shadow: 4px 4px 0px var(--pink);
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1;
+}
+.hero-sub {
+    font-family: "Press Start 2P", cursive;
+    font-size: 12px;
+    color: var(--white);
+    margin-top: 15px;
+    letter-spacing: 4px;
+    background: #000;
+    padding: 5px 10px;
+    display: inline-block;
+}
+
+@media(max-width:600px){ 
+    .glitch { font-size: 28px; } 
+    .hero-sub { font-size: 10px; letter-spacing: 1px; }
+    .hero-section { height: 120px; }
+}
+
+/* 3. PANELS */
+.panel{
+    width:100%;
+    max-width:960px;
+    background:var(--panel);
+    border: 2px solid var(--cyan); /* Cyan border for containers */
+    padding:25px;
+    margin-bottom:20px;
+    position: relative;
+}
+/* Corner accents for panel */
+.panel::after {
+    content: ""; position: absolute; bottom: -6px; right: -6px;
+    width: 20px; height: 20px; background: var(--yellow);
+    clip-path: polygon(100% 0, 0 100%, 100% 100%);
+}
+
+h1{
+    font-family: "Press Start 2P", cursive;
+    font-size:16px;
+    margin:0 0 20px;
+    color: var(--cyan);
+    text-shadow: 2px 2px 0 #000;
+    text-align: left;
+    border-bottom: 2px dashed var(--dim);
+    padding-bottom: 10px;
+}
+
+/* 4. INPUTS - TERMINAL STYLE */
+input, select{
+    width:100%;
+    padding:15px;
+    margin:12px 0;
+    background:#000; 
+    color: var(--yellow); /* Typing in yellow */
+    border: 2px solid var(--dim); 
+    font-family: "VT323", monospace;
+    font-size: 22px; /* Large readable text */
+    outline: none;
+    text-transform: uppercase;
+}
+input::placeholder { color: #444; }
+input:focus, select:focus {
+    border-color: var(--yellow);
+    box-shadow: 0 0 10px rgba(255, 214, 10, 0.2);
+}
+input:disabled, select:disabled{
+    background: #111;
+    color: #333;
+    border-color: #222;
+    cursor: not-allowed;
+}
+
+/* 5. ACTION BUTTONS */
+button{
+    padding:16px 20px;
+    margin:8px;
+    font-family: "Press Start 2P", cursive;
+    font-size:12px;
+    background: var(--pink);
+    color: #fff;
+    border: 2px solid #fff;
+    box-shadow: 4px 4px 0 #000;
+    cursor:pointer;
+    transition: all 0.1s;
+}
+button:hover { 
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #000;
+    background: #ff3377;
+}
+button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 #000;
+}
+button:disabled{ 
+    opacity:0.5; cursor:not-allowed; 
+    background: #333; color: #888; border-color: #555;
+    box-shadow: none; transform: none;
+}
+
+/* RESET BUTTON (Text only style) */
+.reset-btn {
+    border: none; box-shadow: none;
+    color: var(--pink);
+    background: transparent;
+    font-size: 10px; padding: 0; margin: 0;
+}
+.reset-btn:hover {
+    background: transparent; box-shadow: none; transform: none;
+    text-decoration: underline; color: #fff;
+}
+
+/* GROUPS & SELECTION */
+.groups-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:15px;margin-top:15px;}
+.group{ border:2px solid #333; padding:15px; background: #0e0e1a; }
+.group h4{
+    font-family: "Press Start 2P"; font-size:12px; margin-bottom:15px; 
+    color: var(--yellow); text-align: left;
+}
+
+.team-row{display:flex;justify-content:space-between;align-items:center;gap:8px; margin-bottom: 10px;}
+.team-name{font-size:20px; flex:1; text-align:left; color: #fff;}
+
+/* SELECTION BUTTONS (Mini Arcade Buttons) */
+.team-btn{
+    font-family: "Press Start 2P", monospace;
+    font-size: 9px; 
+    padding: 8px 10px;
+    border: 1px solid #555;
+    background: #222;
+    color: #888;
+    box-shadow: 2px 2px 0 #000;
+    margin: 0;
+}
+.team-btn:hover { color: #fff; border-color: #fff; }
+/* 2nd Place = Green/Cyan */
+.team-btn.selected-2{ background: var(--cyan); color: #000; border-color: #fff; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
+/* 3rd Place = White/Grey */
+.team-btn.selected-3{ background: var(--white); color: #000; border-color: #fff; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
+
+/* CHECKBOXES */
+.terms-container { display: flex; flex-direction: column; gap: 15px; margin: 15px 0; align-items: flex-start; border-top: 1px solid #333; padding-top: 15px; }
+.terms-container label { font-size: 18px; color: #aaa; display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left; }
+.terms-container a { color: var(--cyan); text-decoration: none; }
+.terms-container input[type="checkbox"] { 
+    width: 20px; height: 20px; margin: 0; cursor: pointer; 
+    appearance: none; background: #000; border: 2px solid var(--dim);
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.terms-container input[type="checkbox"]:checked { background: var(--cyan); border-color: #fff; }
+.terms-container input[type="checkbox"]:checked::after { content: '✔'; color: #000; font-size: 14px; }
+
+/* SYSTEM MESSAGES */
+.sys{margin:12px 0; font-size:18px; color: var(--dim); min-height: 24px; text-transform: uppercase;}
+.sys.active { color: var(--pink); animation: blink 1s infinite;}
+.sys.prominent { color: var(--yellow); font-size: 20px; }
+
+/* FIXED SUMMARY POPUP */
+.submit-overlay{
+    position:fixed; inset:0; background:rgba(11, 11, 31, 0.95);
+    display:none; align-items:center; justify-content:center; z-index:20;
+}
+.submit-box{
+    max-width:700px; width:94%; 
+    max-height: 85vh; /* Scrollable fix */
+    overflow-y: auto; 
+    border: 4px solid var(--yellow); 
+    padding:20px; 
+    background:#000;
+    box-shadow: 0 0 0 1000px rgba(0,0,0,0.8); /* Focus effect */
+}
+.submit-box::-webkit-scrollbar { width: 10px; background: #222; }
+.submit-box::-webkit-scrollbar-thumb { background: var(--pink); border: 2px solid #fff; }
+
+.submit-box h2{ 
+    font-family: "Press Start 2P"; font-size:18px; color:var(--yellow); 
+    margin-bottom:20px; text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px;
+}
+.summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* TWO COLUMNS */
+    gap: 15px;
+    text-align: left;
+    margin-bottom: 20px;
+}
+@media(max-width:600px){ .summary-grid { grid-template-columns: 1fr; } } /* Stack on mobile */
+
+.summary-item { padding: 8px; background: #111; border: 1px solid #333; font-size: 16px; color: #fff; }
+.summary-item strong { color: var(--cyan); font-family: "Press Start 2P"; margin-right: 10px; }
+
+/* MISC POPUPS */
+.arcade-popup {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: #000; border: 4px solid var(--white); padding: 30px;
+    z-index: 1000; width: 90%; max-width: 450px; text-align: center;
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.5); display: none;
+    flex-direction: column; align-items: center;
+}
+.popup-msg { color: #fff; font-size: 18px; line-height: 1.6; margin-bottom: 20px; }
+
+/* RANDOM PLAYER OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(11, 11, 31, 0.98);display:none;align-items:center;justify-content:center;z-index:10;}
+.modal{width:92%;max-width:960px;text-align:center;}
+.top-player{
+    border:4px solid var(--yellow); background: #000;
+    padding:20px; font-family:"Press Start 2P"; font-size:24px;
+    margin-bottom:20px; color: var(--yellow); text-shadow: 2px 2px 0 var(--pink);
+}
+.player-box{ border:1px solid #333; padding:10px 4px; font-family: "Press Start 2P"; font-size:9px; color: #555;}
+.player-box.active{ background: var(--pink); color: #fff; transform: scale(1.1); border-color: #fff; }
+.player-box.selected{ background: var(--yellow); color: #000; border-color: #fff; box-shadow: 0 0 15px var(--yellow); }
+
+</style>
+</head> <body> 
+
+<div class="nav" id="nav">
+  <a href="index.html">HOME</a>
+  <a href="predict.html" class="active">PLAY</a>
+  <a href="scores.html">SCORES</a>
+  <a href="rules.html">RULES</a>
+</div>  
+
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="glitch" data-text="GOALSTORM!">GOALSTORM!</h1>
+        <div class="hero-sub">WORLD CUP 2026 PREDICTOR</div>
+    </div>
+</div>
+
+<div id="startupPopup" class="arcade-popup" style="display:flex;">
+    <div class="popup-msg">
+        <strong style="color:var(--yellow)">READY PLAYER ONE?</strong><br><br>
+        THE SUBMISSION WINDOW IS CURRENTLY CLOSED.<br><br>
+        <span style="color:var(--pink); font-size:16px;">⚠ WARNING: NO SAVE FUNCTION. REFRESHING WIPES DATA.</span>
+    </div>
+    <button id="startupBtn">INSERT COIN (OK)</button>
+</div>
+
+<div id="rulesPopup" class="arcade-popup">
+    <div class="popup-msg" style="text-align: left;">
+        <strong style="color:var(--cyan)">HOW TO PLAY:</strong><br><br>
+        1. 48 TEAMS. 12 GROUPS.<br>
+        2. TOP 2 QUALIFY AUTOMATICALLY.<br>
+        3. THE 8 BEST 3RD-PLACE TEAMS QUALIFY.<br>
+        4. PREDICT THE SCORERS.<br>
+    </div>
+    <button id="rulesBtn">CLOSE</button>
+</div>
+
+<div class="panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px dashed #333; margin-bottom: 20px; padding-bottom:10px;">
+        <h1 style="margin:0; border:none; color:var(--white);">PLAYER IDENTITY</h1>
+        <button onclick="resetTerminal()" class="reset-btn">✕ RESET</button>
+    </div>
+
+    <input id="username" placeholder="ENTER USERNAME">
+    <input id="email" placeholder="ENTER EMAIL ADDRESS" disabled>
+    <input id="leaguePin" placeholder="LEAGUE PIN (OPTIONAL)" maxlength="4">
+
+    <div class="terms-container">
+        <label><input type="checkbox" id="privacyCheck"> <span>I AGREE TO <a href="#">PRIVACY POLICY</a></span></label>
+        <label><input type="checkbox" id="termsCheck"> <span>I AGREE TO <a href="#">TERMS OF USE</a></span></label>
+        <label><input type="checkbox" id="marketingCheck"> <span>ENABLE ALERTS</span></label>
+    </div>
+    <div class="sys" id="s1msg">AWAITING PLAYER CREDENTIALS...</div>
+</div>  
+
+<div class="panel">
+    <h1>TOURNAMENT PREDICTIONS</h1>
+    <button id="comboTrigger" style="width:100%; margin:12px 0;">CHOOSE SCORER DUO</button>
+    <select id="combo" style="display:none;" disabled>
+        <option value="">SELECT SCORER DUO</option>
+        <option>Messi & Ronaldo</option>
+        <option>Neymar & Mbappé</option>
+        <option>Lewandowski & Haaland</option>
+        <option>Salah & Mané</option>
+        <option>Kane & Sterling</option>
+        <option>Vinícius & Pedri</option>
+    </select>
+
+    <input id="goals" placeholder="TOTAL TOURNAMENT GOALS (TIEBREAKER)" type="number" disabled>
+    
+    <div class="sys prominent" style="margin-top: 30px; text-align:center;">
+        SELECT <span style="color:var(--cyan)">2ND PLACE</span> & <span style="color:var(--white)">3RD PLACE</span>
+    </div>
+    <div class="groups-grid" id="groupsGrid"></div>
+</div> 
+
+<button id="lockBtn" style="width: 100%; max-width: 600px; font-size: 16px;" disabled>LOCK PICKS & BONUS ROUND</button>
+
+<div id="arcadePopup" class="arcade-popup">
+    <div class="popup-msg" id="popupMsg"></div>
+    <button id="popupBtn">OK</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div style="font-family:'Press Start 2P'; color:#fff; margin-bottom:15px; font-size:12px;">BONUS PLAYER SELECTOR</div>
+    <div class="top-player" id="topPlayer">???</div>
+    <div class="subtitle">STICK WITH THIS PLAYER OR TWIST?</div>
+    <div class="actions">
+      <button id="stickBtn">STICK</button>
+      <button id="twistBtn">TWIST (2)</button>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</div>  
+
+<div class="submit-overlay" id="submitOverlay">
+  <div class="submit-box">
+    <h2>PREDICTION RECORD</h2>
+    <div style="margin-bottom: 20px; color: #aaa; text-align:center; font-size:18px;">
+        PLAYER: <span id="sumUser" style="color:var(--yellow)"></span>
+    </div>
+    
+    <div style="background: #222; padding: 15px; margin-bottom: 20px; border: 1px solid #444; color: #fff; text-align: center;">
+        <div style="font-size:14px; color:#888; margin-bottom:5px;">SCORER TRIO</div>
+        <div id="sumScorers" style="font-size:20px; color:var(--pink);"></div>
+    </div>
+
+    <div class="summary-grid" id="sumGrid">
+        </div>
+
+    <div class="hint" style="color:#666; margin-top:20px; font-size: 14px; text-align:center;">
+        [ SYSTEM NOTICE: SCREENSHOT THIS RECORD ]
+    </div>
+    <div style="text-align:center;">
+        <a href="index.html" style="color:var(--cyan); font-size:18px; text-decoration:none;">[ EXIT / REFRESH ]</a>
+    </div>
+  </div>
+</div> 
+
+<script>
+'use strict';
+/* ---------- POPUP LOGIC ---------- */
+const startupPopup = document.getElementById('startupPopup');
+document.getElementById('startupBtn').onclick = () => { startupPopup.style.display = 'none'; };
+
+const rulesPopup = document.getElementById('rulesPopup');
+document.getElementById('rulesLink')?.addEventListener('click', (e) => { e.preventDefault(); rulesPopup.style.display = 'flex'; });
+document.getElementById('rulesBtn').onclick = () => { rulesPopup.style.display = 'none'; };
+
+/* ---------- STATE VARIABLES ---------- */
+const usernameInput=document.getElementById('username'),
+emailInput=document.getElementById('email'),
+privacyCheck=document.getElementById('privacyCheck'),
+termsCheck=document.getElementById('termsCheck'),
+comboSelect=document.getElementById('combo'),
+comboTrigger=document.getElementById('comboTrigger'),
+goalsInput=document.getElementById('goals'),
+s1msg=document.getElementById('s1msg'),
+lockBtn=document.getElementById('lockBtn');
+
+function resetTerminal() {
+    if(confirm('SYSTEM WARNING: RESET ALL DATA?')) {
+        location.reload();
+    }
+}
+
+/* ---------- FLOW CONTROLLER ---------- */
+function updateTerminalState() {
+    const isNameValid = usernameInput.value.trim().length > 2;
+    const isEmailValid = emailInput.value.includes('@') && emailInput.value.includes('.');
+    const areTermsChecked = privacyCheck.checked && termsCheck.checked;
+    const isIdentityComplete = isNameValid && isEmailValid && areTermsChecked;
+
+    if (!isNameValid) {
+        emailInput.disabled = true;
+        s1msg.textContent = "AWAITING PLAYER CREDENTIALS...";
+        s1msg.classList.remove('active');
+    } else {
+        emailInput.disabled = false;
+        if (!isEmailValid) {
+            s1msg.textContent = "ERROR: INVALID EMAIL FORMAT";
+            s1msg.classList.add('active');
+        } else if (!areTermsChecked) {
+             s1msg.textContent = "REQUIRED: ACCEPT TERMS TO PROCEED";
+             s1msg.classList.add('active');
+        } else {
+             s1msg.textContent = "ACCESS GRANTED. SYSTEM UNLOCKED.";
+             s1msg.classList.remove('active');
+             s1msg.style.color = "var(--cyan)";
+        }
+    }
+
+    if (!isIdentityComplete) {
+        comboTrigger.disabled = true;
+        comboSelect.disabled = true;
+        goalsInput.disabled = true;
+    } else {
+        if(comboSelect.style.display === 'none'){
+            comboTrigger.disabled = false;
+        } else {
+             comboSelect.disabled = false;
+        }
+        const isComboSelected = comboSelect.value !== "";
+        goalsInput.disabled = !isComboSelected;
+    }
+
+    // Lock Button Logic
+    const isGoalsValid = goalsInput.value > 0;
+    const isComboSelected = comboSelect.value !== "";
+    const secondComplete = state.secondPicks.every(x => x !== null);
+    const thirdComplete = state.thirdPicks.filter(x => x !== null).length === MAX_THIRD;
+    
+    lockBtn.disabled = !(isIdentityComplete && isComboSelected && isGoalsValid && secondComplete && thirdComplete);
+}
+
+[usernameInput, emailInput, comboSelect, goalsInput, privacyCheck, termsCheck].forEach(el => {
+    el.addEventListener('input', updateTerminalState);
+    el.addEventListener('change', updateTerminalState);
+});
+
+// Combo Trigger
+comboTrigger.onclick = () => {
+    comboTrigger.style.display = 'none';
+    comboSelect.style.display = 'block';
+    updateTerminalState();
+};
+
+/* ---------- GROUP PICKS LOGIC ---------- */
+const GROUPS=[ 
+["MEXICO 🇲🇽","S.AFRICA 🇿🇦","S.KOREA 🇰🇷","DEN/IRL 🇩🇰"],
+["CANADA 🇨🇦","ITALY 🇮🇹","QATAR 🇶🇦","SWITZ 🇨🇭"],
+["BRAZIL 🇧🇷","MOROCCO 🇲🇦","HAITI 🇭🇹","SCOTLAND 🏴"],
+["USA 🇺🇸","PARAGUAY 🇵🇾","AUSTRALIA 🇦🇺","TURKEY 🇹🇷"],
+["GERMANY 🇩🇪","CURAÇAO 🇨🇼","IVORY C. 🇨🇮","ECUADOR 🇪🇨"],
+["NETH. 🇳🇱","JAPAN 🇯🇵","POLAND 🇵🇱","TUNISIA 🇹🇳"],
+["BELGIUM 🇧🇪","EGYPT 🇪🇬","IRAN 🇮🇷","NZ 🇳🇿"],
+["SPAIN 🇪🇸","C.VERDE 🇨🇻","SAUDI 🇸🇦","URUGUAY 🇺🇾"],
+["FRANCE 🇫🇷","SENEGAL 🇸🇳","BOLIVIA 🇧🇴","NORWAY 🇳🇴"],
+["ARGENTINA 🇦🇷","ALGERIA 🇩🇿","AUSTRIA 🇦🇹","JORDAN 🇯🇴"],
+["PORTUGAL 🇵🇹","JAMAICA 🇯🇲","UZBEK 🇺🇿","COLOMBIA 🇨🇴"],
+["ENGLAND 🏴","CROATIA 🇭🇷","GHANA 🇬🇭","PANAMA 🇵🇦"]
+];
+const letters="ABCDEFGHIJKL".split('');
+const MAX_THIRD=8;
+const state={ secondPicks:Array(GROUPS.length).fill(null), thirdPicks:Array(GROUPS.length).fill(null) };
+const groupsGrid=document.getElementById('groupsGrid');
+
+// Generic Popup
+const popup = document.getElementById('arcadePopup');
+const popupMsg = document.getElementById('popupMsg');
+document.getElementById('popupBtn').onclick = () => { popup.style.display = 'none'; };
+
+function showPopup(msg) {
+    popupMsg.textContent = msg;
+    popup.style.display = 'flex';
+}
+
+function renderGroups(){ 
+    groupsGrid.innerHTML='';
+    GROUPS.forEach((teams, i) => {
+        const g=document.createElement('div'); g.className='group';
+        g.innerHTML = `<h4>GROUP ${letters[i]}</h4>`;
+        
+        teams.forEach((team, idx) => {
+            const row=document.createElement('div');
+            row.className='team-row';
+            
+            const name=document.createElement('span');
+            name.className='team-name';
+            name.textContent = team;
+            
+            const btn2=document.createElement('button');
+            btn2.className='team-btn';
+            btn2.textContent='2ND';
+            btn2.onclick = () => togglePick(i, idx, 'second', btn2);
+
+            const btn3=document.createElement('button');
+            btn3.className='team-btn';
+            btn3.textContent='3RD';
+            btn3.onclick = () => togglePick(i, idx, 'third', btn3);
+
+            row.append(name, btn2, btn3);
+            g.appendChild(row);
+        });
+        groupsGrid.appendChild(g);
+    });
+}
+
+function togglePick(groupIndex, teamIndex, type, btn) {
+    const parentRow = btn.parentElement;
+    
+    // Check conflicts within group
+    if (type === 'second' && state.thirdPicks[groupIndex] === teamIndex) { showPopup("ALREADY PICKED AS 3RD"); return; }
+    if (type === 'third' && state.secondPicks[groupIndex] === teamIndex) { showPopup("ALREADY PICKED AS 2ND"); return; }
+
+    if (type === 'second') {
+        const current = state.secondPicks[groupIndex];
+        if (current === teamIndex) {
+            state.secondPicks[groupIndex] = null;
+            btn.classList.remove('selected-2');
+        } else {
+            // Deselect previous selection in this group
+            const groupDiv = groupsGrid.children[groupIndex];
+            const oldBtn = groupDiv.querySelector('.selected-2');
+            if(oldBtn) oldBtn.classList.remove('selected-2');
+            
+            state.secondPicks[groupIndex] = teamIndex;
+            btn.classList.add('selected-2');
+        }
+    } else {
+        // Third place logic
+        const current = state.thirdPicks[groupIndex];
+        if (current === teamIndex) {
+            state.thirdPicks[groupIndex] = null;
+            btn.classList.remove('selected-3');
+        } else {
+            if (state.thirdPicks.filter(x=>x!==null).length >= MAX_THIRD) { showPopup("MAX 8 THIRD-PLACE TEAMS REACHED"); return; }
+            
+            const groupDiv = groupsGrid.children[groupIndex];
+            const oldBtn = groupDiv.querySelector('.selected-3');
+            if(oldBtn) oldBtn.classList.remove('selected-3');
+
+            state.thirdPicks[groupIndex] = teamIndex;
+            btn.classList.add('selected-3');
+        }
+    }
+    updateTerminalState();
+}
+
+/* ---------- BONUS ROUND ---------- */
+const PLAYERS=['MESSI','RONALDO','MBAPPÉ','HAALAND','SALAH','KANE','NEYMAR','VINÍCIUS','PEDRI','GRIEZMANN','BELLINGHAM','LEWANDOWSKI','SON','OSIMHEN','SAKA','RASHFORD','FODEN','MUSIALA'];
+let finalPlayer = null;
+let twists = 2;
+
+lockBtn.onclick = () => {
+    document.getElementById('nav').style.display = 'none';
+    document.getElementById('overlay').style.display = 'flex';
+    initBonusGame();
+};
+
+function initBonusGame() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    PLAYERS.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'player-box';
+        div.textContent = p;
+        grid.appendChild(div);
+    });
+    spinWheel();
+}
+
+function spinWheel() {
+    const boxes = document.querySelectorAll('.player-box');
+    let spins = 0;
+    const maxSpins = 20;
+    const interval = setInterval(() => {
+        boxes.forEach(b => b.classList.remove('active'));
+        const r = Math.floor(Math.random() * boxes.length);
+        boxes[r].classList.add('active');
+        document.getElementById('topPlayer').textContent = boxes[r].textContent;
+        spins++;
+        if(spins > maxSpins) {
+            clearInterval(interval);
+            finalPlayer = boxes[r].textContent;
+            boxes[r].classList.remove('active');
+            boxes[r].classList.add('selected');
+        }
+    }, 100);
+}
+
+document.getElementById('twistBtn').onclick = () => {
+    if(twists > 0) {
+        twists--;
+        document.getElementById('twistBtn').textContent = `TWIST (${twists})`;
+        document.querySelectorAll('.player-box').forEach(b => b.classList.remove('selected'));
+        spinWheel();
+        if(twists===0) document.getElementById('twistBtn').disabled = true;
+    }
+};
+
+document.getElementById('stickBtn').onclick = showFinalSummary;
+
+function showFinalSummary() {
+    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('sumUser').textContent = usernameInput.value.toUpperCase();
+    document.getElementById('sumEmail').textContent = emailInput.value.toUpperCase();
+    document.getElementById('sumScorers').textContent = comboSelect.value.toUpperCase() + " + " + finalPlayer;
+
+    const grid = document.getElementById('sumGrid');
+    GROUPS.forEach((teams, i) => {
+        const div = document.createElement('div');
+        div.className = 'summary-item';
+        const p2 = state.secondPicks[i] !== null ? teams[state.secondPicks[i]] : '-';
+        const p3 = state.thirdPicks[i] !== null ? teams[state.thirdPicks[i]] : '';
+        
+        let html = `<strong>${letters[i]}</strong> ${p2}`;
+        if(p3) html += ` <span style="color:#fff; opacity:0.5">/ ${p3}</span>`;
+        
+        div.innerHTML = html;
+        grid.appendChild(div);
+    });
+
+    document.getElementById('submitOverlay').style.display = 'flex';
+}
+
+renderGroups();
+</script> </body>
+</html>
+
