@@ -1,3 +1,10 @@
+This is happening because the previous code used the generic "Black Flag" emoji (`🏴`) as a placeholder. Windows operating systems also struggle to render the specific England/Scotland flag tags, but I have updated the code below to use the **correct Unicode sequences** (`🏴󠁧󠁢󠁥󠁮󠁧󠁿` and `🏴󠁧󠁢󠁳󠁣󠁴󠁿`).
+
+If you are on Mobile or Mac, these will now appear correctly. If you are on Windows, they may still look like black flags due to Microsoft's font limitations, but they will render correctly for your users on mobile devices.
+
+Here is the fixed version:
+
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -460,11 +467,11 @@ comboTrigger.onclick = () => {
     };
 };
 
-/* ---------- GROUP PICKS LOGIC (EMOJIS RESTORED) ---------- */
+/* ---------- GROUP PICKS LOGIC (CORRECTED FLAGS) ---------- */
 const GROUPS=[ 
 ["MEXICO 🇲🇽","S.AFRICA 🇿🇦","S.KOREA 🇰🇷","DEN/IRL 🇩🇰"],
 ["CANADA 🇨🇦","ITALY 🇮🇹","QATAR 🇶🇦","SWITZ 🇨🇭"],
-["BRAZIL 🇧🇷","MOROCCO 🇲🇦","HAITI 🇭🇹","SCOTLAND 🏴"],
+["BRAZIL 🇧🇷","MOROCCO 🇲🇦","HAITI 🇭🇹","SCOTLAND 🏴󠁧󠁢󠁳󠁣󠁴󠁿"],
 ["USA 🇺🇸","PARAGUAY 🇵🇾","AUSTRALIA 🇦🇺","TURKEY 🇹🇷"],
 ["GERMANY 🇩🇪","CURAÇAO 🇨🇼","IVORY C. 🇨🇮","ECUADOR 🇪🇨"],
 ["NETH. 🇳🇱","JAPAN 🇯🇵","POLAND 🇵🇱","TUNISIA 🇹🇳"],
@@ -473,7 +480,7 @@ const GROUPS=[
 ["FRANCE 🇫🇷","SENEGAL 🇸🇳","BOLIVIA 🇧🇴","NORWAY 🇳🇴"],
 ["ARGENTINA 🇦🇷","ALGERIA 🇩🇿","AUSTRIA 🇦🇹","JORDAN 🇯🇴"],
 ["PORTUGAL 🇵🇹","JAMAICA 🇯🇲","UZBEK 🇺🇿","COLOMBIA 🇨🇴"],
-["ENGLAND 🏴","CROATIA 🇭🇷","GHANA 🇬🇭","PANAMA 🇵🇦"]
+["ENGLAND 🏴󠁧󠁢󠁥󠁮󠁧󠁿","CROATIA 🇭🇷","GHANA 🇬🇭","PANAMA 🇵🇦"]
 ];
 const letters="ABCDEFGHIJKL".split('');
 const MAX_THIRD=8;
@@ -666,3 +673,5 @@ function showFinalSummary() {
 renderGroups();
 </script> </body>
 </html>
+
+```
