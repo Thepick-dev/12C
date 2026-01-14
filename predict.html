@@ -1,9 +1,20 @@
+Here is the amended **Version 1**.
+
+I have applied the strict mode changes:
+
+1. **Rebranded** to GOALSURGE and WORLD CUP 2026.
+2. **UI/UX Overhaul:** Implemented Version 2's "flow" (locking inputs until previous steps are done, better placeholder text).
+3. **Popups:** Ported the Version 2 popup system (including the progress bar for 3rd place picks) and updated the Startup popup to include the "Insert Coin" joke.
+4. **Summary Screen:** Completely redesigned to be compact, visually striking for screenshots, and branded with GOALSURGE.
+5. **Clean up:** Removed Reset button, updated permissions text, renamed headers.
+
+```html
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>GOALSTORM! — ARCADE EDITION</title>
+<title>GOALSURGE! — WORLD CUP 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
 /* --- 1. CORE PALETTE: HOT ARCADE --- */
@@ -102,10 +113,12 @@ input, select {
     width: 100%; padding: 15px; margin: 10px 0; background: #000;
     color: var(--neon-yellow); border: 2px solid #333;
     font-family: "VT323", monospace; font-size: 24px; outline: none; text-transform: uppercase;
+    transition: all 0.3s;
 }
 input:focus, select:focus { border-color: var(--neon-yellow); }
 input::placeholder { color: #444; }
-input:disabled { opacity: 0.3; border-color: #222; }
+input:disabled { opacity: 0.5; border-color: #222; background: #0b0b0b; cursor: not-allowed; }
+input:disabled::placeholder { color: var(--neon-pink); opacity: 0.6; font-size: 18px; }
 
 /* --- 5. GRID LAYOUTS --- */
 .groups-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }
@@ -114,7 +127,7 @@ input:disabled { opacity: 0.3; border-color: #222; }
 .team-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #222; }
 .team-name { font-size: 20px; flex: 1; text-align: left; color: #eee; }
 
-/* --- 6. POPUPS & OVERLAYS --- */
+/* --- 6. POPUPS & OVERLAYS (UPDATED TO V2 STYLE) --- */
 .arcade-popup {
     position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
     background: #000; border: 4px solid var(--neon-pink); padding: 30px;
@@ -122,9 +135,17 @@ input:disabled { opacity: 0.3; border-color: #222; }
     box-shadow: 10px 10px 0 rgba(0,0,0,0.5); display: none;
     flex-direction: column; align-items: center; justify-content: center;
 }
-.popup-msg { font-size: 18px; line-height: 1.5; margin-bottom: 20px; color: #fff; }
+.popup-msg { font-size: 16px; line-height: 1.5; margin-bottom: 20px; color: #fff; font-family: "VT323", monospace; }
 
-/* INFO TOOLTIP (RESTORED) */
+/* Progress Bar for Popups */
+.progress-track {
+    width: 100%; height: 20px; background: #222; border: 2px solid #555; margin-top: 10px; position: relative;
+}
+.progress-fill {
+    height: 100%; background: var(--neon-cyan); width: 0%; transition: width 0.3s ease;
+}
+
+/* INFO TOOLTIP */
 .info-tooltip {
     position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
     background: #000; border: 2px solid var(--neon-cyan); padding: 15px;
@@ -133,63 +154,53 @@ input:disabled { opacity: 0.3; border-color: #222; }
 }
 .info-tooltip .tooltip-text { color: var(--neon-cyan); font-size: 18px; line-height: 1.2; text-transform: uppercase; font-family: "VT323", monospace; }
 
-/* EPIC SUMMARY SCREEN (MOBILE FIX) */
+/* NEW SUMMARY SCREEN (COMPACT) */
 .submit-overlay {
     position: fixed; inset: 0; background: rgba(10, 10, 15, 0.98);
     display: none; align-items: center; justify-content: center; z-index: 20;
 }
 .submit-box {
-    width: 96%; max-width: 650px; 
-    max-height: 92vh; /* Make sure it fits on screen */
-    overflow-y: auto; /* Scroll if needed */
-    background: #000; 
-    border: 6px solid var(--neon-yellow); 
-    padding: 0;
-    box-shadow: 0 0 50px rgba(255, 200, 0, 0.2);
+    width: 96%; max-width: 500px; 
+    max-height: 95vh; overflow-y: auto;
+    background: #000; border: 4px solid var(--neon-yellow); 
+    padding: 15px;
 }
 .submit-header {
-    background: var(--neon-yellow); color: #000; padding: 15px;
-    font-family: "Press Start 2P"; font-size: 14px; text-align: center;
+    background: var(--neon-yellow); color: #000; padding: 10px;
+    font-family: "Press Start 2P"; font-size: 16px; text-align: center; margin-bottom: 10px;
 }
-.submit-body { padding: 15px; } /* Reduced padding for mobile */
-.submit-info {
-    border-bottom: 2px dashed #444; padding-bottom: 15px; margin-bottom: 15px;
-    text-align: left; font-size: 18px; line-height: 1.6; color: #888;
-    word-break: break-word; /* Prevents email overflow */
+.submit-sub { font-size: 12px; color: #fff; margin-bottom: 10px; text-align: left; line-height: 1.4; border-bottom: 1px solid #333; padding-bottom: 10px;}
+.sc-box { 
+    background: #111; border: 1px solid var(--neon-pink); padding: 8px; margin-bottom: 10px; 
+    text-align: center; color: #fff; font-size: 14px;
 }
-.sc-box {
-    border: 2px solid var(--neon-pink); padding: 10px; margin-bottom: 20px;
-    background: #111; text-align: center;
+.sum-grid-compact {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px;
 }
-.sc-title { font-family:"Press Start 2P"; font-size:10px; color: var(--neon-pink); margin-bottom: 10px; }
-.sc-val { font-family:"Press Start 2P"; font-size:14px; color: #fff; line-height: 1.4; }
-
-.summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: left; }
-/* Mobile: Force single column for summary so it fits */
-@media(max-width: 600px) { .summary-grid { grid-template-columns: 1fr; } }
-
-.summary-item { padding: 8px; border-bottom: 1px solid #222; color: #fff; font-size: 16px; }
-.summary-item strong { color: var(--neon-cyan); font-family: "Press Start 2P"; font-size: 10px; margin-right: 8px; }
+.sum-row-compact {
+    background: #111; padding: 5px; border: 1px solid #333; font-size: 12px; text-align: left;
+}
+.sum-row-compact strong { color: var(--neon-cyan); font-family: "Press Start 2P"; font-size: 8px; margin-right: 5px; }
 
 /* CHECKBOXES & MISC */
 .terms-container { margin: 15px 0; text-align: left; border-top: 1px solid #333; padding-top: 15px; }
-.terms-container label { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: #888; cursor: pointer; }
+.terms-container label { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: #888; cursor: pointer; font-size: 16px; }
 .terms-container input { width: 20px; height: 20px; margin: 0; cursor: pointer; accent-color: var(--neon-cyan); }
-.sys { margin: 15px 0; font-size: 18px; color: #555; text-transform: uppercase; min-height: 24px; }
-.sys.active { color: var(--neon-pink); }
-.reset-btn { border: none; background: none; color: #555; font-size: 12px; cursor: pointer; float: right; padding: 0; margin: 0; box-shadow: none;} 
-.reset-btn:hover { color: var(--neon-pink); transform: none; box-shadow: none; text-decoration: underline; }
+.required-mark { color: var(--neon-pink); font-weight: bold; margin-right: 5px; }
 
-/* RANDOM PLAYER SELECTOR - MOBILE FIX */
+.sys { margin: 15px 0; font-size: 18px; color: #555; text-transform: uppercase; min-height: 24px; transition: color 0.3s; }
+.sys.active { color: var(--neon-pink); }
+.sys.complete { color: var(--neon-cyan); text-shadow: 0 0 5px var(--neon-cyan); }
+.sys.intro { color: #fff; margin-bottom: 5px; }
+
+/* RANDOM PLAYER SELECTOR */
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 10; }
 .modal { width: 95%; max-width: 600px; text-align: center; }
 .top-player { border: 4px solid var(--neon-cyan); padding: 20px; color: var(--neon-cyan); font-family: "Press Start 2P"; font-size: 20px; margin-bottom: 20px; background: #000; word-wrap: break-word;}
 .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
-/* Mobile Adjustment for Selector Grid */
 @media(max-width: 600px) { 
-    .grid { grid-template-columns: repeat(2, 1fr); } 
-    .player-box { font-size: 14px; padding: 10px; }
-    .top-player { font-size: 16px; }
+    .grid { grid-template-columns: repeat(3, 1fr); } 
+    .player-box { font-size: 10px; padding: 10px; }
 }
 .player-box { padding: 8px; border: 1px solid #333; color: #444; font-family: "Press Start 2P"; font-size: 10px; }
 .player-box.active { background: var(--neon-pink); color: #fff; border-color: #fff; z-index: 5; }
@@ -208,49 +219,52 @@ input:disabled { opacity: 0.3; border-color: #222; }
 <div class="hero-section">
     <div class="scanlines"></div>
     <div class="hero-content">
-        <h1 class="glitch" data-text="GOALSTORM!">GOALSTORM!</h1>
-        <div class="hero-sub">ARCADE EDITION 2026</div>
+        <h1 class="glitch" data-text="GOALSURGE!">GOALSURGE!</h1>
+        <div class="hero-sub">WORLD CUP 2026</div>
     </div>
 </div>
 
 <div id="startupPopup" class="arcade-popup" style="display:flex;">
     <div class="popup-msg">
         <strong style="color:var(--neon-yellow)">READY PLAYER ONE?</strong><br><br>
-        PREDICT THE WORLD CUP.<br>BEAT THE HIGH SCORE.<br><br>
-        <span style="color:var(--neon-pink); font-size:14px;">[ SYSTEM: NO SAVE FUNCTION. REFRESHING WIPES DATA. ]</span>
+        PREDICT THE WORLD CUP. BEAT THE HIGH SCORE.<br><br>
+        THE SUBMISSION WINDOW WILL OPEN NEAR TO THE START OF THE TOURNAMENT.
     </div>
-    <button id="startupBtn">INSERT COIN</button>
+    <button id="startupBtn">INSERT COIN (JK IT'S FREE)</button>
 </div>
 
 <div id="rulesPopup" class="arcade-popup">
-    <div class="popup-msg" style="text-align: left;">
-        <strong style="color:var(--neon-cyan)">MISSION OBJECTIVES:</strong><br><br>
-        1. SELECT 2ND PLACE (CYAN)<br>
-        2. SELECT 3RD PLACE (PINK)<br>
-        3. CHOOSE TOP SCORERS<br>
-        4. SURVIVE THE BONUS ROUND
+    <div class="popup-msg" style="text-align: justify; font-size: 14px;">
+        THERE WILL BE 48 TEAMS PLAYING AT WORLD CUP 2026. TOP 2 TEAMS FROM EACH OF THE 12 GROUPS WILL QUALIFY AUTOMATICALLY FOR L32.<br><br>
+        THE 8 BEST THIRD-PLACED TEAMS IN THE GROUP STAGE (BASED ON POINTS, GOAL DIFFERENCE ETC) WILL QUALIFY FOR L32 WITH THE OTHER 4 THIRD-PLACED TEAMS EXITING THE TOURNAMENT.
     </div>
-    <button id="rulesBtn">CLOSE</button>
+    <button id="rulesBtn">OK</button>
 </div>
 
 <div class="panel">
-    <h1><span style="float:left;">PLAYER IDENTITY</span> <button onclick="resetTerminal()" class="reset-btn">✕ RESET SYSTEM</button></h1>
+    <h1>USER INFO</h1>
     
-    <input id="username" placeholder="ENTER USERNAME">
-    <input id="email" placeholder="ENTER EMAIL ADDRESS" disabled>
+    <input id="username" placeholder="USERNAME (REQUIRED)">
+    <input id="email" placeholder="ENTER USERNAME FIRST" disabled>
     <input id="leaguePin" placeholder="LEAGUE PIN (OPTIONAL)" maxlength="4">
 
     <div class="terms-container">
-        <label><input type="checkbox" id="privacyCheck"> <span>I ACCEPT <a href="#">PRIVACY POLICY</a></span></label>
-        <label><input type="checkbox" id="termsCheck"> <span>I ACCEPT <a href="#">TERMS OF USE</a></span></label>
-        <label><input type="checkbox" id="marketingCheck"> <span>ENABLE ALERTS</span></label>
+        <label><input type="checkbox" id="privacyCheck"> <span><span class="required-mark">*REQUIRED:</span> I ACCEPT <a href="#">PRIVACY POLICY</a></span></label>
+        <label><input type="checkbox" id="termsCheck"> <span><span class="required-mark">*REQUIRED:</span> I ACCEPT <a href="#">TERMS OF USE</a></span></label>
+        <label><input type="checkbox" id="marketingCheck"> <span>ENABLE ALERTS (OPTIONAL)</span></label>
     </div>
     <div class="sys" id="s1msg">AWAITING CREDENTIALS...</div>
 </div>  
 
 <div class="panel">
-    <h1>TOURNAMENT PREDICTIONS</h1>
-    <button id="comboTrigger" style="width:100%;">CHOOSE SCORER DUO</button>
+    <h1>ROUND 1: GROUP STAGE</h1>
+    
+    <div class="sys intro">PICKING 1ST PLACE IS TOO EASY.</div>
+    <div class="sys" style="color:#fff; margin-bottom: 20px;">
+        SELECT <span style="color:var(--neon-cyan)">2ND PLACE</span> & <a href="#" id="rulesLink" style="color:var(--neon-pink)">8 THIRD-PLACE QUALIFIERS</a>
+    </div>
+
+    <button id="comboTrigger" style="width:100%;" disabled>COMPLETE USER INFO ABOVE FIRST</button>
     <select id="combo" style="display:none;" disabled>
         <option value="">SELECT SCORER DUO</option>
         <option>Messi & Ronaldo</option>
@@ -261,11 +275,8 @@ input:disabled { opacity: 0.3; border-color: #222; }
         <option>Vinícius & Pedri</option>
     </select>
 
-    <input id="goals" placeholder="TOTAL GOALS (TIEBREAKER)" type="number" disabled>
+    <input id="goals" placeholder="SELECT DUO FIRST" type="number" disabled>
     
-    <div class="sys prominent" style="margin-top: 30px; text-align:center;">
-        SELECT <span style="color:var(--neon-cyan)">2ND PLACE</span> & <span style="color:var(--neon-pink)">3RD PLACE</span>
-    </div>
     <div class="groups-grid" id="groupsGrid"></div>
 </div> 
 
@@ -273,6 +284,11 @@ input:disabled { opacity: 0.3; border-color: #222; }
 
 <div id="arcadePopup" class="arcade-popup">
     <div class="popup-msg" id="popupMsg"></div>
+    <div id="progressBarContainer" style="display:none; width:100%;">
+        <div class="progress-track">
+            <div id="progressFill" class="progress-fill"></div>
+        </div>
+    </div>
     <button id="popupBtn">OK</button>
 </div>
 
@@ -295,26 +311,24 @@ input:disabled { opacity: 0.3; border-color: #222; }
 
 <div class="submit-overlay" id="submitOverlay">
   <div class="submit-box">
-    <div class="submit-header">OFFICIAL ENTRY RECORD</div>
+    <div class="submit-header">GOALSURGE ENTRY</div>
     
-    <div class="submit-body">
-        <div class="submit-info">
-            PLAYER: <span id="sumUser" style="color:var(--neon-cyan)"></span><br>
-            EMAIL: <span id="sumEmail" style="color:#fff"></span><br>
-            PIN: <span id="sumPin" style="color:#fff"></span>
-        </div>
-        
-        <div class="sc-box">
-            <div class="sc-title">OFFICIAL SCORER TRIO</div>
-            <div id="sumScorers" class="sc-val"></div>
-        </div>
+    <div class="submit-sub">
+        PLAYER: <span id="sumUser" style="color:var(--neon-cyan)"></span><br>
+        EMAIL: <span id="sumEmail" style="color:#aaa"></span><br>
+        PIN: <span id="sumPin" style="color:#fff"></span>
+    </div>
+    
+    <div class="sc-box">
+        <span style="color:var(--neon-yellow)">SCORER TRIO:</span><br>
+        <span id="sumScorers"></span>
+    </div>
 
-        <div class="summary-grid" id="sumGrid"></div>
+    <div class="sum-grid-compact" id="sumGrid"></div>
 
-        <div style="text-align:center; margin-top:20px; border-top: 2px solid #333; padding-top:15px;">
-            <div style="color:var(--neon-pink); font-family:'Press Start 2P'; font-size: 10px; margin-bottom:15px;">[ CAPTURE SCREENSHOT NOW ]</div>
-            <button onclick="location.reload()" style="font-size:10px; padding:10px;">EXIT GAME</button>
-        </div>
+    <div style="text-align:center; margin-top:20px; border-top: 1px solid #333; padding-top:10px;">
+        <div style="color:var(--neon-pink); font-size: 10px; margin-bottom:10px;">[ CAPTURE SCREENSHOT ]</div>
+        <button onclick="location.reload()" style="font-size:10px; padding:8px;">EXIT GAME</button>
     </div>
   </div>
 </div> 
@@ -341,13 +355,7 @@ goalsInput=document.getElementById('goals'),
 s1msg=document.getElementById('s1msg'),
 lockBtn=document.getElementById('lockBtn');
 
-function resetTerminal() {
-    if(confirm('SYSTEM WARNING: RESET ALL DATA?')) {
-        location.reload();
-    }
-}
-
-/* ---------- TOOLTIPS (RESTORED) ---------- */
+/* ---------- TOOLTIPS ---------- */
 const infoTooltip = document.getElementById('infoTooltip');
 const tooltipText = document.getElementById('tooltipText');
 let tooltipTimeout;
@@ -361,24 +369,28 @@ function showTooltip(msg, duration = 3000) {
     }, duration);
 }
 
-// Attach tooltips to specific inputs
+// Attach tooltips
 usernameInput.addEventListener('focus', () => showTooltip('DISPLAY NAME FOR LEADERBOARD'));
 leaguePinInput.addEventListener('focus', () => showTooltip('ENTER 4-DIGIT PIN FOR PRIVATE LEAGUE'));
 goalsInput.addEventListener('focus', () => showTooltip('TOTAL GOALS IN GROUP STAGE (TIEBREAKER)'));
 
-/* ---------- FLOW CONTROLLER ---------- */
+/* ---------- FLOW CONTROLLER (V2 LOGIC) ---------- */
 function updateTerminalState() {
     const isNameValid = usernameInput.value.trim().length > 2;
     const isEmailValid = emailInput.value.includes('@') && emailInput.value.includes('.');
     const areTermsChecked = privacyCheck.checked && termsCheck.checked;
+    
+    // Identity Check
     const isIdentityComplete = isNameValid && isEmailValid && areTermsChecked;
 
     if (!isNameValid) {
         emailInput.disabled = true;
+        emailInput.placeholder = "ENTER USERNAME FIRST";
         s1msg.textContent = "AWAITING CREDENTIALS...";
         s1msg.className = "sys";
     } else {
         emailInput.disabled = false;
+        emailInput.placeholder = "EMAIL ADDRESS";
         if (!isEmailValid) {
             s1msg.textContent = "ERROR: INVALID EMAIL FORMAT";
             s1msg.className = "sys active";
@@ -387,23 +399,33 @@ function updateTerminalState() {
              s1msg.className = "sys active";
         } else {
              s1msg.textContent = "ACCESS GRANTED. SYSTEM UNLOCKED.";
-             s1msg.className = "sys";
-             s1msg.style.color = "var(--neon-cyan)";
+             s1msg.className = "sys complete";
         }
     }
 
+    // Prediction Controls
     if (!isIdentityComplete) {
         comboTrigger.disabled = true;
+        comboTrigger.textContent = "COMPLETE USER INFO ABOVE FIRST";
         comboSelect.disabled = true;
         goalsInput.disabled = true;
+        goalsInput.placeholder = "COMPLETE USER INFO FIRST";
     } else {
         if(comboSelect.style.display === 'none'){
             comboTrigger.disabled = false;
+            comboTrigger.textContent = "CHOOSE SCORER DUO";
         } else {
              comboSelect.disabled = false;
         }
         const isComboSelected = comboSelect.value !== "";
-        goalsInput.disabled = !isComboSelected;
+        
+        if (!isComboSelected) {
+            goalsInput.disabled = true;
+            goalsInput.placeholder = "SELECT DUO FIRST";
+        } else {
+            goalsInput.disabled = false;
+            goalsInput.placeholder = "TOTAL GOALS (TIEBREAKER)";
+        }
     }
 
     // Lock Button Logic
@@ -420,13 +442,25 @@ function updateTerminalState() {
     el.addEventListener('change', updateTerminalState);
 });
 
+// V2 Style Combo Popup
 comboTrigger.onclick = () => {
-    comboTrigger.style.display = 'none';
-    comboSelect.style.display = 'block';
-    updateTerminalState();
+    showPopup("These two players and your Bonus Player (chosen at the end) will earn points for you with goals and assists in the Group Stage.");
+    
+    // Override default popup behavior temporarily
+    const btn = document.getElementById('popupBtn');
+    const oldOnClick = btn.onclick;
+    
+    btn.onclick = () => {
+        document.getElementById('arcadePopup').style.display = 'none';
+        comboTrigger.style.display = 'none';
+        comboSelect.style.display = 'block';
+        updateTerminalState();
+        // Reset popup button
+        btn.onclick = () => { document.getElementById('arcadePopup').style.display = 'none'; };
+    };
 };
 
-/* ---------- GROUP PICKS LOGIC (EMOJIS RESTORED) ---------- */
+/* ---------- GROUP PICKS LOGIC (V2 PROGRESS LOGIC) ---------- */
 const GROUPS=[ 
 ["MEXICO 🇲🇽","S.AFRICA 🇿🇦","S.KOREA 🇰🇷","DEN/IRL 🇩🇰"],
 ["CANADA 🇨🇦","ITALY 🇮🇹","QATAR 🇶🇦","SWITZ 🇨🇭"],
@@ -448,11 +482,26 @@ const groupsGrid=document.getElementById('groupsGrid');
 
 const popup = document.getElementById('arcadePopup');
 const popupMsg = document.getElementById('popupMsg');
-document.getElementById('popupBtn').onclick = () => { popup.style.display = 'none'; };
+const popupBtn = document.getElementById('popupBtn');
+const progressBarContainer = document.getElementById('progressBarContainer');
+const progressFill = document.getElementById('progressFill');
 
-function showPopup(msg) {
+popupBtn.onclick = () => { popup.style.display = 'none'; };
+
+function showPopup(msg, isProgress=false, count=0) {
     popupMsg.textContent = msg;
     popup.style.display = 'flex';
+    
+    if(isProgress) {
+        popupBtn.style.display = 'none';
+        progressBarContainer.style.display = 'block';
+        const pct = (count / MAX_THIRD) * 100;
+        progressFill.style.width = pct + '%';
+        setTimeout(() => { popup.style.display = 'none'; }, 1500);
+    } else {
+        popupBtn.style.display = 'block';
+        progressBarContainer.style.display = 'none';
+    }
 }
 
 function renderGroups(){ 
@@ -487,9 +536,7 @@ function renderGroups(){
 }
 
 function togglePick(groupIndex, teamIndex, type, btn) {
-    const parentRow = btn.parentElement;
-    
-    // Check conflicts within group
+    // Check conflicts
     if (type === 'second' && state.thirdPicks[groupIndex] === teamIndex) { showPopup("ALREADY PICKED AS 3RD"); return; }
     if (type === 'third' && state.secondPicks[groupIndex] === teamIndex) { showPopup("ALREADY PICKED AS 2ND"); return; }
 
@@ -513,10 +560,8 @@ function togglePick(groupIndex, teamIndex, type, btn) {
         if (current === teamIndex) {
             state.thirdPicks[groupIndex] = null;
             btn.classList.remove('selected-3');
-            // SHOW COUNT POPUP ON REMOVE
             const count = state.thirdPicks.filter(x => x !== null).length;
-            showPopup(`${count}/8 THIRD PLACE TEAMS`);
-            setTimeout(() => { if(popup.style.display==='flex') popup.style.display='none'; }, 1000);
+            showPopup(`${count}/8 THIRD PLACE TEAMS`, true, count);
         } else {
             if (state.thirdPicks.filter(x=>x!==null).length >= MAX_THIRD) { showPopup("MAX 8 THIRD-PLACE TEAMS REACHED"); return; }
             
@@ -527,10 +572,8 @@ function togglePick(groupIndex, teamIndex, type, btn) {
             state.thirdPicks[groupIndex] = teamIndex;
             btn.classList.add('selected-3');
             
-            // SHOW COUNT POPUP ON ADD
             const count = state.thirdPicks.filter(x => x !== null).length;
-            showPopup(`${count}/8 THIRD PLACE TEAMS`);
-            setTimeout(() => { if(popup.style.display==='flex') popup.style.display='none'; }, 1000);
+            showPopup(`${count}/8 THIRD PLACE TEAMS`, true, count);
         }
     }
     updateTerminalState();
@@ -613,12 +656,12 @@ function showFinalSummary() {
     grid.innerHTML = ''; // Clear prev
     GROUPS.forEach((teams, i) => {
         const div = document.createElement('div');
-        div.className = 'summary-item';
+        div.className = 'sum-row-compact';
         const p2 = state.secondPicks[i] !== null ? teams[state.secondPicks[i]] : '-';
         const p3 = state.thirdPicks[i] !== null ? teams[state.thirdPicks[i]] : '';
         
-        let html = `<strong>${letters[i]}</strong> ${p2}`;
-        if(p3) html += ` <span style="color:#fff; opacity:0.5">/ ${p3}</span>`;
+        let html = `<strong>GP ${letters[i]}</strong> ${p2}`;
+        if(p3) html += ` <span style="color:var(--neon-pink)">/ ${p3}</span>`;
         
         div.innerHTML = html;
         grid.appendChild(div);
@@ -630,3 +673,5 @@ function showFinalSummary() {
 renderGroups();
 </script> </body>
 </html>
+
+```
