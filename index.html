@@ -1,10 +1,3 @@
-This is happening because the previous code used the generic "Black Flag" emoji (`🏴`) as a placeholder. Windows operating systems also struggle to render the specific England/Scotland flag tags, but I have updated the code below to use the **correct Unicode sequences** (`🏴󠁧󠁢󠁥󠁮󠁧󠁿` and `🏴󠁧󠁢󠁳󠁣󠁴󠁿`).
-
-If you are on Mobile or Mac, these will now appear correctly. If you are on Windows, they may still look like black flags due to Microsoft's font limitations, but they will render correctly for your users on mobile devices.
-
-Here is the fixed version:
-
-```html
 <!doctype html>
 <html lang="en">
 <head>
