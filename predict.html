@@ -225,34 +225,31 @@ input:disabled::placeholder { color: var(--neon-pink); opacity: 0.7; font-size: 
 .player-box.active { background: var(--neon-pink); color: #fff; border-color: #fff; z-index: 5; }
 .player-box.selected { background: var(--neon-yellow); color: #000; border-color: #fff; }
 
-/* --- DESKTOP ENHANCEMENTS --- */
+/* --- DESKTOP ENHANCEMENTS (NEW CODE) --- */
 @media (min-width: 768px) {
-    /* Main Layout */
-    .hero-section { padding: 50px 0; }
+    /* Navigation - make readable */
+    .nav a { font-size: 18px; padding: 20px 10px; }
     
-    /* Typography Boost */
+    /* Hero - make massive */
     .glitch { font-size: 64px; }
-    .hero-sub { font-size: 14px; padding: 10px 20px; }
+    .hero-sub { font-size: 14px; letter-spacing: 5px; }
     
-    /* Navigation */
-    .nav { gap: 20px; }
-    .nav a { font-size: 16px; padding: 20px 10px; }
+    /* General Panel Headers */
+    h1 { font-size: 24px; }
+
+    /* Inputs - bigger for mouse users */
+    input, select { font-size: 28px; padding: 20px; }
     
-    /* Panel Headers */
-    h1 { font-size: 24px; padding-bottom: 15px; }
-    
-    /* Grid & Teams */
+    /* Grid items - scale up */
     .group h4 { font-size: 16px; }
-    .team-name { font-size: 28px; }
-    .team-btn { font-size: 14px; width: 65px; }
+    .team-name { font-size: 26px; }
+    .team-btn { font-size: 14px; width: 60px; }
     
-    /* Inputs & Text */
-    input, select { font-size: 26px; }
+    /* General System Text */
     .sys { font-size: 22px; }
-    .terms-container label { font-size: 22px; }
-    .terms-container input { width: 25px; height: 25px; }
+    .terms-container label { font-size: 20px; }
     
-    /* Buttons */
+    /* Action Buttons */
     button { font-size: 18px; padding: 20px 30px; }
 }
 </style>
