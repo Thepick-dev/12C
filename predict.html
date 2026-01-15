@@ -1,14 +1,3 @@
-Here is the amended **Version 1**.
-
-I have applied the strict mode changes:
-
-1. **Rebranded** to GOALSURGE and WORLD CUP 2026.
-2. **UI/UX Overhaul:** Implemented Version 2's "flow" (locking inputs until previous steps are done, better placeholder text).
-3. **Popups:** Ported the Version 2 popup system (including the progress bar for 3rd place picks) and updated the Startup popup to include the "Insert Coin" joke.
-4. **Summary Screen:** Completely redesigned to be compact, visually striking for screenshots, and branded with GOALSURGE.
-5. **Clean up:** Removed Reset button, updated permissions text, renamed headers.
-
-```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -17,13 +6,13 @@ I have applied the strict mode changes:
 <title>GOALSURGE! — WORLD CUP 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
-/* --- 1. CORE PALETTE: HOT ARCADE --- */
+/* --- 1. CORE PALETTE & ATMOSPHERE --- */
 :root{
   --bg: #0f0e17;          
-  --panel: #1a1a2e;       
-  --neon-pink: #ff2a6d;   /* ACTION */
-  --neon-cyan: #05d9e8;   /* STRUCTURE */
-  --neon-yellow: #ffc800; /* DATA */
+  --panel: rgba(26, 26, 46, 0.85); /* Added Transparency */
+  --neon-pink: #ff2a6d;   
+  --neon-cyan: #05d9e8;   
+  --neon-yellow: #ffc800; 
   --text-main: #d1d1d1;
 }
 
@@ -32,13 +21,17 @@ I have applied the strict mode changes:
 body{
     margin:0;
     background-color: var(--bg);
+    /* CRT Vignette + Grid */
     background-image: 
+        radial-gradient(circle at center, rgba(15, 14, 23, 0.4) 0%, rgba(0, 0, 0, 0.95) 100%),
         linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 20px 20px;
+    background-size: 100% 100%, 20px 20px, 20px 20px;
+    background-attachment: fixed;
     color: var(--text-main);
-    font-family:"VT323", monospace;
-    font-size: 20px; 
+    font-family:"VT323", monospace; /* Default to VT323 */
+    font-size: 22px; 
+    letter-spacing: 1px; /* Prevent crushing */
     text-align:center;
     display:flex;
     flex-direction:column;
@@ -47,164 +40,236 @@ body{
     padding-bottom: 60px;
 }
 
-/* --- 2. HEADER & GLITCH --- */
+/* --- 2. TYPOGRAPHY & HEADER --- */
+/* Restrict Press Start 2P to Headers/Logo */
+h1, .glitch, .hero-sub, button, .top-player, .sc-title {
+    font-family: "Press Start 2P", cursive;
+}
+
 .hero-section {
-    width: 100%; max-width: 960px; padding: 30px 0; margin-bottom: 20px;
+    width: 100%; max-width: 960px; padding: 40px 0; margin-bottom: 25px;
     border-bottom: 4px solid var(--neon-cyan);
-    background: linear-gradient(180deg, rgba(5, 217, 232, 0) 0%, rgba(5, 217, 232, 0.1) 100%);
+    background: linear-gradient(180deg, rgba(5, 217, 232, 0) 0%, rgba(5, 217, 232, 0.15) 100%);
     position: relative; overflow: hidden;
+    box-shadow: 0 0 20px rgba(5, 217, 232, 0.3); /* Glow */
 }
 .scanlines {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
     background-size: 100% 4px; pointer-events: none; z-index: 2;
 }
 .glitch {
-    font-family: "Press Start 2P", cursive; font-size: 48px; 
+    font-size: 40px; 
     color: var(--neon-yellow);
     text-shadow: 4px 4px 0px var(--neon-pink), -3px -3px 0px var(--neon-cyan);
     text-transform: uppercase; margin: 0; line-height: 1; letter-spacing: -2px;
 }
 .hero-sub {
-    font-family: "Press Start 2P", cursive; font-size: 10px; color: #fff;
-    margin-top: 15px; letter-spacing: 3px; background: var(--neon-pink);
-    padding: 6px 12px; display: inline-block; box-shadow: 4px 4px 0 #000;
+    font-size: 10px; color: #fff;
+    margin-top: 15px; letter-spacing: 2px; background: var(--neon-pink);
+    padding: 8px 14px; display: inline-block; box-shadow: 4px 4px 0 #000;
 }
 
-/* --- 3. NAV & BUTTONS --- */
+/* --- 3. NAV --- */
 .nav {
-  width: 100%; max-width: 960px; display: flex; gap: 10px; padding: 10px; margin-top: 10px;
+  width: 100%; max-width: 960px; display: flex; gap: 10px; padding: 0 10px; margin-top: 15px;
 }
 .nav a {
-  flex: 1; font-family: "Press Start 2P", cursive; font-size: 10px; padding: 12px 5px;
-  color: var(--neon-cyan); text-decoration: none; background: #111;
-  border: 2px solid var(--neon-cyan); box-shadow: 4px 4px 0px 0px rgba(5, 217, 232, 0.4);
-  text-transform: uppercase; transition: all 0.1s; display: flex; align-items: center; justify-content: center;
+  flex: 1; font-family: "Press Start 2P", cursive; font-size: 10px; padding: 14px 5px;
+  color: var(--neon-cyan); text-decoration: none; background: #080808;
+  border: 1px solid var(--neon-cyan); 
+  box-shadow: 0 0 5px rgba(5, 217, 232, 0.2);
+  text-transform: uppercase; transition: all 0.2s; display: flex; align-items: center; justify-content: center;
 }
-.nav a.active { background: var(--neon-pink); border-color: var(--neon-pink); color: #fff; }
+.nav a.active { 
+    background: var(--neon-pink); border-color: var(--neon-pink); color: #fff; 
+    box-shadow: 0 0 15px rgba(255, 42, 109, 0.6);
+}
 
-button {
-    font-family: "Press Start 2P", cursive; font-size: 14px; padding: 15px 20px; margin: 10px 0;
-    color: #fff; background: var(--neon-pink); border: 2px solid #fff;
-    box-shadow: 4px 4px 0px #000; cursor: pointer; transition: all 0.05s; text-transform: uppercase;
+/* --- 4. PANELS & INPUTS (TACTILE) --- */
+.panel {
+    width: 95%; max-width: 960px; background: var(--panel);
+    border: 2px solid var(--neon-cyan); 
+    padding: 35px; /* Increased Breathing Room */
+    margin-bottom: 30px;
+    box-shadow: 0 0 20px rgba(5, 217, 232, 0.15), inset 0 0 30px rgba(0,0,0,0.5); /* Glow & Depth */
+    backdrop-filter: blur(2px);
 }
-button:hover { background: #ff5c8d; transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000; }
-button:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000; }
+h1 {
+    font-size: 16px; margin-bottom: 30px; /* Space below header */
+    color: var(--neon-cyan); border-bottom: 4px solid #000; padding-bottom: 15px; text-align: left;
+    text-shadow: 2px 2px 0 #000;
+}
+
+/* Input "Terminal" Style */
+input, select {
+    width: 100%; padding: 16px; margin: 12px 0; 
+    background: #050508; /* Darker than panel */
+    color: var(--neon-yellow); 
+    border: 2px solid #444;
+    box-shadow: inset 4px 4px 10px rgba(0,0,0,0.8); /* Inset Shadow */
+    font-family: "VT323", monospace; font-size: 24px; outline: none; text-transform: uppercase;
+    transition: all 0.2s;
+    letter-spacing: 1.5px;
+}
+input:focus, select:focus { 
+    border-color: var(--neon-yellow); 
+    box-shadow: 0 0 15px rgba(255, 200, 0, 0.2), inset 2px 2px 5px rgba(0,0,0,0.5);
+}
+input:disabled { opacity: 0.6; border-color: #222; background: #000; cursor: not-allowed; color: #555; box-shadow: none;}
+input:disabled::placeholder { color: var(--neon-pink); opacity: 0.8; font-size: 20px; }
+
+/* --- 5. BUTTONS (JUICE) --- */
+button {
+    font-size: 14px; padding: 18px 24px; margin: 10px 0;
+    color: #fff; background: var(--neon-pink); border: 2px solid #fff;
+    box-shadow: 4px 4px 0px #000; /* Hard shadow */
+    cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; 
+    text-transform: uppercase;
+    position: relative;
+}
+button:hover { background: #ff5c8d; transform: translate(-1px, -1px); box-shadow: 5px 5px 0px #000; }
+button:active { 
+    transform: translateY(2px); /* Physical Press Feel */
+    box-shadow: 2px 2px 0px #000; 
+}
 button:disabled { opacity: 0.5; cursor: not-allowed; background: #333; border-color: #555; box-shadow: none; transform: none; }
 
+/* --- 6. GROUPS GRID (CLEANED UP) --- */
+.groups-grid { 
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+    gap: 20px; margin-top: 25px; 
+}
+.group { 
+    background: #101018; border: 2px solid #000; padding: 0; /* Removing padding to let rows hit edge */
+}
+.group h4 { 
+    font-size: 12px; padding: 12px; margin: 0; 
+    background: #000; color: var(--neon-yellow); text-align: left; 
+    border-bottom: 1px solid #333;
+}
+
+/* Uniform Rows & Alignment */
+.team-row { 
+    display: flex; 
+    justify-content: space-between; /* Name Left, Buttons Right */
+    align-items: center; 
+    height: 52px; /* Fixed Height */
+    padding: 0 12px; 
+    border-bottom: 1px solid #222;
+    transition: background 0.2s;
+}
+/* Zebra Striping */
+.team-row:nth-child(odd) { background: rgba(255,255,255,0.03); }
+/* Hover State */
+.team-row:hover { background: rgba(5, 217, 232, 0.1); }
+
+.team-name { 
+    font-family: "VT323", monospace; font-size: 22px; 
+    text-align: left; color: #eee; flex: 1; 
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Team Buttons */
 .team-btn {
-    font-size: 10px; padding: 10px; width: 50px;
-    background: #222; border: 1px solid #444; color: #666; box-shadow: 2px 2px 0 #000;
+    font-family: "Press Start 2P"; font-size: 9px; /* Smaller font for fit */
+    padding: 8px 6px; width: 45px; margin: 0 0 0 6px;
+    background: #222; border: 1px solid #444; color: #666; 
+    box-shadow: 2px 2px 0 #000;
 }
 .team-btn.selected-2 { background: var(--neon-cyan); color: #000; border-color: #fff; }
 .team-btn.selected-3 { background: var(--neon-pink); color: #fff; border-color: #fff; }
 
-/* --- 4. PANELS & INPUTS --- */
-.panel {
-    width: 95%; max-width: 960px; background: var(--panel);
-    border: 3px solid var(--neon-cyan); padding: 20px; margin-bottom: 25px;
-    box-shadow: 0 0 20px rgba(5, 217, 232, 0.1);
-}
-h1 {
-    font-family: "Press Start 2P", cursive; font-size: 16px; margin-bottom: 20px;
-    color: var(--neon-cyan); border-bottom: 4px solid #000; padding-bottom: 10px; text-align: left;
-}
-input, select {
-    width: 100%; padding: 15px; margin: 10px 0; background: #000;
-    color: var(--neon-yellow); border: 2px solid #333;
-    font-family: "VT323", monospace; font-size: 24px; outline: none; text-transform: uppercase;
-    transition: all 0.3s;
-}
-input:focus, select:focus { border-color: var(--neon-yellow); }
-input::placeholder { color: #444; }
-input:disabled { opacity: 0.5; border-color: #222; background: #0b0b0b; cursor: not-allowed; }
-input:disabled::placeholder { color: var(--neon-pink); opacity: 0.6; font-size: 18px; }
-
-/* --- 5. GRID LAYOUTS --- */
-.groups-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }
-.group { background: #12121c; border: 2px solid #000; padding: 10px; }
-.group h4 { font-family: "Press Start 2P"; font-size: 12px; margin-bottom: 15px; color: var(--neon-yellow); text-align: left; }
-.team-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #222; }
-.team-name { font-size: 20px; flex: 1; text-align: left; color: #eee; }
-
-/* --- 6. POPUPS & OVERLAYS (UPDATED TO V2 STYLE) --- */
-.arcade-popup {
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    background: #000; border: 4px solid var(--neon-pink); padding: 30px;
-    z-index: 1000; width: 90%; max-width: 450px;
-    box-shadow: 10px 10px 0 rgba(0,0,0,0.5); display: none;
-    flex-direction: column; align-items: center; justify-content: center;
-}
-.popup-msg { font-size: 16px; line-height: 1.5; margin-bottom: 20px; color: #fff; font-family: "VT323", monospace; }
-
-/* Progress Bar for Popups */
-.progress-track {
-    width: 100%; height: 20px; background: #222; border: 2px solid #555; margin-top: 10px; position: relative;
-}
-.progress-fill {
-    height: 100%; background: var(--neon-cyan); width: 0%; transition: width 0.3s ease;
-}
-
-/* INFO TOOLTIP */
-.info-tooltip {
-    position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
-    background: #000; border: 2px solid var(--neon-cyan); padding: 15px;
-    z-index: 1001; width: 85%; max-width: 400px; text-align: center;
-    box-shadow: 0 0 20px rgba(5, 217, 232, 0.4); display: none;
-}
-.info-tooltip .tooltip-text { color: var(--neon-cyan); font-size: 18px; line-height: 1.2; text-transform: uppercase; font-family: "VT323", monospace; }
-
-/* NEW SUMMARY SCREEN (COMPACT) */
+/* --- 7. SUMMARY RECEIPT (POLISHED) --- */
 .submit-overlay {
     position: fixed; inset: 0; background: rgba(10, 10, 15, 0.98);
     display: none; align-items: center; justify-content: center; z-index: 20;
 }
 .submit-box {
-    width: 96%; max-width: 500px; 
+    width: 96%; max-width: 480px; 
     max-height: 95vh; overflow-y: auto;
-    background: #000; border: 4px solid var(--neon-yellow); 
-    padding: 15px;
+    background: #000; /* High Contrast */
+    border: 4px dashed var(--neon-yellow); /* Receipt Style */
+    padding: 0;
+    box-shadow: 0 0 60px rgba(255, 200, 0, 0.15);
 }
 .submit-header {
-    background: var(--neon-yellow); color: #000; padding: 10px;
-    font-family: "Press Start 2P"; font-size: 16px; text-align: center; margin-bottom: 10px;
+    background: var(--neon-yellow); color: #000; padding: 20px;
+    font-size: 16px; text-align: center; margin-bottom: 0;
 }
-.submit-sub { font-size: 12px; color: #fff; margin-bottom: 10px; text-align: left; line-height: 1.4; border-bottom: 1px solid #333; padding-bottom: 10px;}
-.sc-box { 
-    background: #111; border: 1px solid var(--neon-pink); padding: 8px; margin-bottom: 10px; 
-    text-align: center; color: #fff; font-size: 14px;
-}
-.sum-grid-compact {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px;
-}
-.sum-row-compact {
-    background: #111; padding: 5px; border: 1px solid #333; font-size: 12px; text-align: left;
-}
-.sum-row-compact strong { color: var(--neon-cyan); font-family: "Press Start 2P"; font-size: 8px; margin-right: 5px; }
+.submit-body { padding: 20px; }
 
-/* CHECKBOXES & MISC */
-.terms-container { margin: 15px 0; text-align: left; border-top: 1px solid #333; padding-top: 15px; }
-.terms-container label { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: #888; cursor: pointer; font-size: 16px; }
-.terms-container input { width: 20px; height: 20px; margin: 0; cursor: pointer; accent-color: var(--neon-cyan); }
-.required-mark { color: var(--neon-pink); font-weight: bold; margin-right: 5px; }
+/* Table-like Alignment for Info */
+.compact-info {
+    border-bottom: 2px dashed #333; padding-bottom: 15px; margin-bottom: 15px;
+    text-align: left; font-size: 18px; line-height: 1.6; color: #fff;
+    font-family: "VT323", monospace;
+}
+.sc-box {
+    background: #111; border: 2px solid var(--neon-pink); padding: 15px; margin-bottom: 15px;
+    text-align: center;
+}
+.sc-title { font-size:10px; color: var(--neon-pink); margin-bottom: 8px; }
+.sc-val { font-size:20px; color: #fff; letter-spacing: 1px;}
 
-.sys { margin: 15px 0; font-size: 18px; color: #555; text-transform: uppercase; min-height: 24px; transition: color 0.3s; }
-.sys.active { color: var(--neon-pink); }
-.sys.complete { color: var(--neon-cyan); text-shadow: 0 0 5px var(--neon-cyan); }
-.sys.intro { color: #fff; margin-bottom: 5px; }
+.compact-grid { 
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; 
+}
+.compact-row { 
+    padding: 8px; border: 1px solid #222; background: #080808; 
+    font-size: 16px; display: flex; align-items: center; justify-content: space-between;
+}
+.compact-row strong { color: var(--neon-cyan); font-family: "Press Start 2P"; font-size: 8px; margin-right: 8px; }
+.compact-row .p3 { color: var(--neon-pink); font-size: 14px; margin-left: 5px; }
 
-/* RANDOM PLAYER SELECTOR */
+/* --- 8. MISC UI ELEMENTS --- */
+.arcade-popup {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: #000; border: 4px solid var(--neon-pink); padding: 30px;
+    z-index: 1000; width: 90%; max-width: 450px;
+    box-shadow: 0 0 30px rgba(255, 42, 109, 0.3); display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+}
+.popup-msg { font-size: 20px; line-height: 1.4; margin-bottom: 25px; color: #fff; font-family: "VT323", monospace; }
+
+.progress-track {
+    width: 100%; height: 20px; background: #222; border: 2px solid #555; margin-top: 10px; position: relative;
+}
+.progress-fill {
+    height: 100%; background: var(--neon-cyan); width: 0%; transition: width 0.3s ease;
+    box-shadow: 0 0 10px var(--neon-cyan);
+}
+
+.info-tooltip {
+    position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
+    background: #000; border: 2px solid var(--neon-cyan); padding: 20px;
+    z-index: 1001; width: 85%; max-width: 400px; text-align: center;
+    box-shadow: 0 0 25px rgba(5, 217, 232, 0.5); display: none;
+}
+.info-tooltip .tooltip-text { color: var(--neon-cyan); font-size: 20px; line-height: 1.2; text-transform: uppercase; font-family: "VT323", monospace; }
+
+.terms-container { margin: 20px 0; text-align: left; border-top: 1px solid #333; padding-top: 20px; }
+.terms-container label { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; color: #888; cursor: pointer; font-size: 20px;}
+.terms-container input { width: 24px; height: 24px; margin: 0; cursor: pointer; accent-color: var(--neon-cyan); box-shadow: none; border-color: #555;}
+.req { color: var(--neon-pink); font-weight: bold; font-family: "Press Start 2P"; font-size: 8px; margin-right: 5px; vertical-align: middle; }
+
+.sys { margin: 15px 0; font-size: 20px; color: #555; text-transform: uppercase; min-height: 24px; transition: color 0.3s; }
+.sys.active { color: var(--neon-pink); text-shadow: 0 0 8px rgba(255, 42, 109, 0.5); }
+.sys.complete { color: var(--neon-cyan); text-shadow: 0 0 8px rgba(5, 217, 232, 0.5); }
+.sys.intro { color: #fff; text-shadow: 1px 1px 0 #000; margin-bottom: 10px;}
+
+/* Random Selector */
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 10; }
 .modal { width: 95%; max-width: 600px; text-align: center; }
-.top-player { border: 4px solid var(--neon-cyan); padding: 20px; color: var(--neon-cyan); font-family: "Press Start 2P"; font-size: 20px; margin-bottom: 20px; background: #000; word-wrap: break-word;}
-.grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+.top-player { border: 4px solid var(--neon-cyan); padding: 25px; color: var(--neon-cyan); margin-bottom: 25px; background: #000; word-wrap: break-word; box-shadow: 0 0 20px var(--neon-cyan);}
+.grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
 @media(max-width: 600px) { 
     .grid { grid-template-columns: repeat(3, 1fr); } 
-    .player-box { font-size: 10px; padding: 10px; }
+    .player-box { font-size: 12px; padding: 12px; }
 }
-.player-box { padding: 8px; border: 1px solid #333; color: #444; font-family: "Press Start 2P"; font-size: 10px; }
-.player-box.active { background: var(--neon-pink); color: #fff; border-color: #fff; z-index: 5; }
-.player-box.selected { background: var(--neon-yellow); color: #000; border-color: #fff; }
+.player-box { padding: 10px; border: 1px solid #333; color: #444; font-family: "Press Start 2P"; font-size: 10px; }
+.player-box.active { background: var(--neon-pink); color: #fff; border-color: #fff; z-index: 5; box-shadow: 0 0 15px var(--neon-pink);}
+.player-box.selected { background: var(--neon-yellow); color: #000; border-color: #fff; box-shadow: 0 0 15px var(--neon-yellow);}
 
 </style>
 </head> <body> 
@@ -227,16 +292,16 @@ input:disabled::placeholder { color: var(--neon-pink); opacity: 0.6; font-size: 
 <div id="startupPopup" class="arcade-popup" style="display:flex;">
     <div class="popup-msg">
         <strong style="color:var(--neon-yellow)">READY PLAYER ONE?</strong><br><br>
-        PREDICT THE WORLD CUP. BEAT THE HIGH SCORE.<br><br>
-        THE SUBMISSION WINDOW WILL OPEN NEAR TO THE START OF THE TOURNAMENT.
+        THE SUBMISSION WINDOW WILL OPEN NEAR TO THE START OF THE TOURNAMENT.<br><br>
+        YOU CAN CLICK THROUGH TO UNDERSTAND THE GAME BUT YOUR SELECTIONS WILL NOT BE SAVED.
     </div>
-    <button id="startupBtn">INSERT COIN (JK IT'S FREE)</button>
+    <button id="startupBtn">INSERT COIN (IT'S FREE)</button>
 </div>
 
 <div id="rulesPopup" class="arcade-popup">
-    <div class="popup-msg" style="text-align: justify; font-size: 14px;">
-        THERE WILL BE 48 TEAMS PLAYING AT WORLD CUP 2026. TOP 2 TEAMS FROM EACH OF THE 12 GROUPS WILL QUALIFY AUTOMATICALLY FOR L32.<br><br>
-        THE 8 BEST THIRD-PLACED TEAMS IN THE GROUP STAGE (BASED ON POINTS, GOAL DIFFERENCE ETC) WILL QUALIFY FOR L32 WITH THE OTHER 4 THIRD-PLACED TEAMS EXITING THE TOURNAMENT.
+    <div class="popup-msg" style="text-align: justify; font-size: 16px;">
+        THERE WILL BE 48 TEAMS PLAYING AT WORLD CUP 2026. TOP 2 TEAMS FROM EACH OF THE 12 GROUPS QUALIFY.<br><br>
+        THE 8 BEST THIRD-PLACED TEAMS ALSO QUALIFY. LONG LIVE INFANTINO! :D $$$
     </div>
     <button id="rulesBtn">OK</button>
 </div>
@@ -249,8 +314,8 @@ input:disabled::placeholder { color: var(--neon-pink); opacity: 0.6; font-size: 
     <input id="leaguePin" placeholder="LEAGUE PIN (OPTIONAL)" maxlength="4">
 
     <div class="terms-container">
-        <label><input type="checkbox" id="privacyCheck"> <span><span class="required-mark">*REQUIRED:</span> I ACCEPT <a href="#">PRIVACY POLICY</a></span></label>
-        <label><input type="checkbox" id="termsCheck"> <span><span class="required-mark">*REQUIRED:</span> I ACCEPT <a href="#">TERMS OF USE</a></span></label>
+        <label><input type="checkbox" id="privacyCheck"> <span><span class="req">*REQ:</span> I ACCEPT <a href="#">PRIVACY POLICY</a></span></label>
+        <label><input type="checkbox" id="termsCheck"> <span><span class="req">*REQ:</span> I ACCEPT <a href="#">TERMS OF USE</a></span></label>
         <label><input type="checkbox" id="marketingCheck"> <span>ENABLE ALERTS (OPTIONAL)</span></label>
     </div>
     <div class="sys" id="s1msg">AWAITING CREDENTIALS...</div>
@@ -260,11 +325,11 @@ input:disabled::placeholder { color: var(--neon-pink); opacity: 0.6; font-size: 
     <h1>ROUND 1: GROUP STAGE</h1>
     
     <div class="sys intro">PICKING 1ST PLACE IS TOO EASY.</div>
-    <div class="sys" style="color:#fff; margin-bottom: 20px;">
-        SELECT <span style="color:var(--neon-cyan)">2ND PLACE</span> & <a href="#" id="rulesLink" style="color:var(--neon-pink)">8 THIRD-PLACE QUALIFIERS</a>
+    <div class="sys" style="color:#fff; margin-bottom: 20px; font-size: 18px;">
+        SELECT <span style="color:var(--neon-cyan)">2ND PLACE</span> & <a href="#" id="rulesLink" style="color:var(--neon-pink); text-decoration: underline;">8 THIRD-PLACE QUALIFIERS</a>
     </div>
 
-    <button id="comboTrigger" style="width:100%;" disabled>COMPLETE USER INFO ABOVE FIRST</button>
+    <button id="comboTrigger" style="width:100%;" disabled>COMPLETE USER INFO FIRST</button>
     <select id="combo" style="display:none;" disabled>
         <option value="">SELECT SCORER DUO</option>
         <option>Messi & Ronaldo</option>
@@ -275,7 +340,7 @@ input:disabled::placeholder { color: var(--neon-pink); opacity: 0.6; font-size: 
         <option>Vinícius & Pedri</option>
     </select>
 
-    <input id="goals" placeholder="SELECT DUO FIRST" type="number" disabled>
+    <input id="goals" placeholder="SELECT SCORER DUO FIRST" type="number" disabled>
     
     <div class="groups-grid" id="groupsGrid"></div>
 </div> 
@@ -311,24 +376,26 @@ input:disabled::placeholder { color: var(--neon-pink); opacity: 0.6; font-size: 
 
 <div class="submit-overlay" id="submitOverlay">
   <div class="submit-box">
-    <div class="submit-header">GOALSURGE ENTRY</div>
+    <div class="submit-header">GOALSURGE ENTRY TICKET</div>
     
-    <div class="submit-sub">
-        PLAYER: <span id="sumUser" style="color:var(--neon-cyan)"></span><br>
-        EMAIL: <span id="sumEmail" style="color:#aaa"></span><br>
-        PIN: <span id="sumPin" style="color:#fff"></span>
-    </div>
-    
-    <div class="sc-box">
-        <span style="color:var(--neon-yellow)">SCORER TRIO:</span><br>
-        <span id="sumScorers"></span>
-    </div>
+    <div class="submit-body">
+        <div class="compact-info">
+            <span style="color:var(--neon-cyan)">PLAYER:</span> <span id="sumUser"></span><br>
+            <span style="color:#aaa">EMAIL:</span> <span id="sumEmail"></span><br>
+            <span style="color:#aaa">PIN:</span> <span id="sumPin"></span>
+        </div>
+        
+        <div class="sc-box">
+            <div class="sc-title">OFFICIAL SCORER TRIO</div>
+            <div id="sumScorers" class="sc-val"></div>
+        </div>
 
-    <div class="sum-grid-compact" id="sumGrid"></div>
+        <div class="compact-grid" id="sumGrid"></div>
 
-    <div style="text-align:center; margin-top:20px; border-top: 1px solid #333; padding-top:10px;">
-        <div style="color:var(--neon-pink); font-size: 10px; margin-bottom:10px;">[ CAPTURE SCREENSHOT ]</div>
-        <button onclick="location.reload()" style="font-size:10px; padding:8px;">EXIT GAME</button>
+        <div style="text-align:center; margin-top:20px; border-top: 2px dashed #333; padding-top:15px;">
+            <div style="color:var(--neon-pink); font-family:'Press Start 2P'; font-size: 10px; margin-bottom:10px;">[ CAPTURE SCREENSHOT NOW ]</div>
+            <button onclick="location.reload()" style="font-size:10px; padding:10px;">EXIT GAME</button>
+        </div>
     </div>
   </div>
 </div> 
@@ -369,18 +436,17 @@ function showTooltip(msg, duration = 3000) {
     }, duration);
 }
 
-// Attach tooltips
 usernameInput.addEventListener('focus', () => showTooltip('DISPLAY NAME FOR LEADERBOARD'));
 leaguePinInput.addEventListener('focus', () => showTooltip('ENTER 4-DIGIT PIN FOR PRIVATE LEAGUE'));
 goalsInput.addEventListener('focus', () => showTooltip('TOTAL GOALS IN GROUP STAGE (TIEBREAKER)'));
 
-/* ---------- FLOW CONTROLLER (V2 LOGIC) ---------- */
+/* ---------- FLOW CONTROLLER (STRICT SEQUENTIAL LOCK) ---------- */
 function updateTerminalState() {
     const isNameValid = usernameInput.value.trim().length > 2;
     const isEmailValid = emailInput.value.includes('@') && emailInput.value.includes('.');
     const areTermsChecked = privacyCheck.checked && termsCheck.checked;
     
-    // Identity Check
+    // 1. Identity
     const isIdentityComplete = isNameValid && isEmailValid && areTermsChecked;
 
     if (!isNameValid) {
@@ -403,10 +469,10 @@ function updateTerminalState() {
         }
     }
 
-    // Prediction Controls
+    // 2. Prediction Inputs
     if (!isIdentityComplete) {
         comboTrigger.disabled = true;
-        comboTrigger.textContent = "COMPLETE USER INFO ABOVE FIRST";
+        comboTrigger.textContent = "COMPLETE USER INFO FIRST";
         comboSelect.disabled = true;
         goalsInput.disabled = true;
         goalsInput.placeholder = "COMPLETE USER INFO FIRST";
@@ -428,7 +494,7 @@ function updateTerminalState() {
         }
     }
 
-    // Lock Button Logic
+    // 3. Lock Button
     const isGoalsValid = goalsInput.value > 0;
     const isComboSelected = comboSelect.value !== "";
     const secondComplete = state.secondPicks.every(x => x !== null);
@@ -445,26 +511,24 @@ function updateTerminalState() {
 // V2 Style Combo Popup
 comboTrigger.onclick = () => {
     showPopup("These two players and your Bonus Player (chosen at the end) will earn points for you with goals and assists in the Group Stage.");
-    
-    // Override default popup behavior temporarily
     const btn = document.getElementById('popupBtn');
-    const oldOnClick = btn.onclick;
     
+    // Temp override for flow
     btn.onclick = () => {
         document.getElementById('arcadePopup').style.display = 'none';
         comboTrigger.style.display = 'none';
         comboSelect.style.display = 'block';
         updateTerminalState();
-        // Reset popup button
+        // Reset
         btn.onclick = () => { document.getElementById('arcadePopup').style.display = 'none'; };
     };
 };
 
-/* ---------- GROUP PICKS LOGIC (V2 PROGRESS LOGIC) ---------- */
+/* ---------- GROUP PICKS LOGIC (CORRECTED FLAGS) ---------- */
 const GROUPS=[ 
 ["MEXICO 🇲🇽","S.AFRICA 🇿🇦","S.KOREA 🇰🇷","DEN/IRL 🇩🇰"],
 ["CANADA 🇨🇦","ITALY 🇮🇹","QATAR 🇶🇦","SWITZ 🇨🇭"],
-["BRAZIL 🇧🇷","MOROCCO 🇲🇦","HAITI 🇭🇹","SCOTLAND 🏴"],
+["BRAZIL 🇧🇷","MOROCCO 🇲🇦","HAITI 🇭🇹","SCOTLAND 🏴󠁧󠁢󠁳󠁣󠁴󠁿"],
 ["USA 🇺🇸","PARAGUAY 🇵🇾","AUSTRALIA 🇦🇺","TURKEY 🇹🇷"],
 ["GERMANY 🇩🇪","CURAÇAO 🇨🇼","IVORY C. 🇨🇮","ECUADOR 🇪🇨"],
 ["NETH. 🇳🇱","JAPAN 🇯🇵","POLAND 🇵🇱","TUNISIA 🇹🇳"],
@@ -473,7 +537,7 @@ const GROUPS=[
 ["FRANCE 🇫🇷","SENEGAL 🇸🇳","BOLIVIA 🇧🇴","NORWAY 🇳🇴"],
 ["ARGENTINA 🇦🇷","ALGERIA 🇩🇿","AUSTRIA 🇦🇹","JORDAN 🇯🇴"],
 ["PORTUGAL 🇵🇹","JAMAICA 🇯🇲","UZBEK 🇺🇿","COLOMBIA 🇨🇴"],
-["ENGLAND 🏴","CROATIA 🇭🇷","GHANA 🇬🇭","PANAMA 🇵🇦"]
+["ENGLAND 🏴󠁧󠁢󠁥󠁮󠁧󠁿","CROATIA 🇭🇷","GHANA 🇬🇭","PANAMA 🇵🇦"]
 ];
 const letters="ABCDEFGHIJKL".split('');
 const MAX_THIRD=8;
@@ -536,7 +600,6 @@ function renderGroups(){
 }
 
 function togglePick(groupIndex, teamIndex, type, btn) {
-    // Check conflicts
     if (type === 'second' && state.thirdPicks[groupIndex] === teamIndex) { showPopup("ALREADY PICKED AS 3RD"); return; }
     if (type === 'third' && state.secondPicks[groupIndex] === teamIndex) { showPopup("ALREADY PICKED AS 2ND"); return; }
 
@@ -546,16 +609,13 @@ function togglePick(groupIndex, teamIndex, type, btn) {
             state.secondPicks[groupIndex] = null;
             btn.classList.remove('selected-2');
         } else {
-            // Deselect previous selection in this group
             const groupDiv = groupsGrid.children[groupIndex];
             const oldBtn = groupDiv.querySelector('.selected-2');
             if(oldBtn) oldBtn.classList.remove('selected-2');
-            
             state.secondPicks[groupIndex] = teamIndex;
             btn.classList.add('selected-2');
         }
     } else {
-        // Third place logic
         const current = state.thirdPicks[groupIndex];
         if (current === teamIndex) {
             state.thirdPicks[groupIndex] = null;
@@ -579,7 +639,7 @@ function togglePick(groupIndex, teamIndex, type, btn) {
     updateTerminalState();
 }
 
-/* ---------- BONUS ROUND (AUTO-SUBMIT) ---------- */
+/* ---------- BONUS ROUND ---------- */
 const PLAYERS=['MESSI','RONALDO','MBAPPÉ','HAALAND','SALAH','KANE','NEYMAR','VINÍCIUS','PEDRI','GRIEZMANN','BELLINGHAM','LEWANDOWSKI','SON','OSIMHEN','SAKA','RASHFORD','FODEN','MUSIALA'];
 let finalPlayer = null;
 let twists = 2;
@@ -617,8 +677,6 @@ function spinWheel(isFinal = false) {
             finalPlayer = boxes[r].textContent;
             boxes[r].classList.remove('active');
             boxes[r].classList.add('selected');
-            
-            // Auto Submit if final
             if(isFinal) {
                 setTimeout(showFinalSummary, 1500);
             }
@@ -631,12 +689,11 @@ document.getElementById('twistBtn').onclick = () => {
         twists--;
         document.getElementById('twistBtn').textContent = `TWIST (${twists})`;
         document.querySelectorAll('.player-box').forEach(b => b.classList.remove('selected'));
-        
         if(twists === 0) {
             document.getElementById('twistBtn').disabled = true;
             document.getElementById('stickBtn').disabled = true;
             document.getElementById('twistSub').textContent = "FINAL SPIN... GOOD LUCK!";
-            spinWheel(true); // Is final spin
+            spinWheel(true); 
         } else {
             spinWheel(false);
         }
@@ -653,15 +710,15 @@ function showFinalSummary() {
     document.getElementById('sumScorers').textContent = comboSelect.value.toUpperCase() + " + " + finalPlayer;
 
     const grid = document.getElementById('sumGrid');
-    grid.innerHTML = ''; // Clear prev
+    grid.innerHTML = ''; 
     GROUPS.forEach((teams, i) => {
         const div = document.createElement('div');
-        div.className = 'sum-row-compact';
+        div.className = 'compact-row';
         const p2 = state.secondPicks[i] !== null ? teams[state.secondPicks[i]] : '-';
         const p3 = state.thirdPicks[i] !== null ? teams[state.thirdPicks[i]] : '';
         
-        let html = `<strong>GP ${letters[i]}</strong> ${p2}`;
-        if(p3) html += ` <span style="color:var(--neon-pink)">/ ${p3}</span>`;
+        let html = `<div><strong>${letters[i]}</strong> ${p2}</div>`;
+        if(p3) html += `<div class="p3">/ ${p3}</div>`;
         
         div.innerHTML = html;
         grid.appendChild(div);
