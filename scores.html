@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>GOALSURGE! — THE JACKPOT</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+/* --- 1. CORE PALETTE --- */
+:root{
+  --bg: #0f0e17;          
+  --panel: #1a1a2e;       
+  --neon-pink: #ff2a6d;   
+  --neon-cyan: #05d9e8;   
+  --neon-yellow: #ffc800; 
+  --text-main: #d1d1d1;
+  --slot-bg: #000;
+  --slot-gradient: linear-gradient(180deg, #000 0%, #222 50%, #000 100%);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body{
+    margin:0;
+    background-color: var(--bg);
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: var(--text-main);
+    font-family:"VT323", monospace;
+    font-size: 20px; 
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    min-height: 100vh;
+    padding-bottom: 60px;
+}
+
+/* --- 2. HEADER --- */
+.hero-section {
+    width: 100%; max-width: 960px; padding: 30px 0; margin-bottom: 20px;
+    border-bottom: 4px solid var(--neon-cyan);
+    background: linear-gradient(180deg, rgba(5, 217, 232, 0) 0%, rgba(5, 217, 232, 0.1) 100%);
+    position: relative; overflow: hidden;
+}
+.glitch {
+    font-family: "Press Start 2P", cursive; font-size: 40px; 
+    color: var(--neon-yellow);
+    text-shadow: 4px 4px 0px var(--neon-pink), -3px -3px 0px var(--neon-cyan);
+    text-transform: uppercase; margin: 0; line-height: 1; letter-spacing: -2px;
+}
+.hero-sub {
+    font-family: "Press Start 2P", cursive; font-size: 10px; color: #fff;
+    margin-top: 15px; letter-spacing: 3px; background: var(--neon-pink);
+    padding: 6px 12px; display: inline-block; box-shadow: 4px 4px 0 #000;
+}
+
+/* --- 3. NAV --- */
+.nav { width: 100%; max-width: 960px; display: flex; gap: 10px; padding: 10px; margin-top: 10px; }
+.nav a {
+  flex: 1; font-family: "Press Start 2P", cursive; font-size: 10px; padding: 12px 5px;
+  color: var(--neon-cyan); text-decoration: none; background: #111;
+  border: 2px solid var(--neon-cyan); box-shadow: 4px 4px 0px 0px rgba(5, 217, 232, 0.4);
+  text-transform: uppercase; transition: all 0.1s; display: flex; align-items: center; justify-content: center;
+}
+.nav a.active { background: var(--neon-pink); border-color: var(--neon-pink); color: #fff; }
+
+/* --- 4. THE SLOT MACHINE UI --- */
+.machine-casing {
+    width: 95%; max-width: 700px;
+    background: #111;
+    border: 6px solid #333;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 0 30px rgba(255, 42, 109, 0.2), inset 0 0 20px #000;
+    position: relative;
+    margin-top: 20px;
+}
+
+.machine-header {
+    font-family: "Press Start 2P"; color: var(--neon-yellow); font-size: 18px; margin-bottom: 20px;
+    text-shadow: 0 0 10px var(--neon-yellow);
+    border: 2px dashed #444; padding: 10px; background: #000;
+}
+
+/* REEL CONTAINERS */
+.reels-row {
+    display: flex; gap: 15px; justify-content: center; margin-bottom: 25px;
+}
+.reel-group {
+    display: flex; flex-direction: column; gap: 5px; flex: 1;
+}
+.reel-label {
+    font-family: "Press Start 2P"; font-size: 10px; color: var(--neon-cyan); margin-bottom: 5px;
+}
+
+/* THE REEL ITSELF */
+.reel-window {
+    height: 100px; background: var(--slot-bg);
+    border: 4px solid var(--neon-pink);
+    border-radius: 5px;
+    position: relative; overflow: hidden;
+    box-shadow: inset 0 0 15px #000;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.reel-window:active { transform: scale(0.98); border-color: #fff; }
+
+.reel-strip {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "VT323"; font-size: 32px; color: #fff; text-transform: uppercase;
+    background: var(--slot-gradient);
+}
+/* Blur animation for spinning */
+.spinning .reel-strip {
+    animation: blurScroll 0.2s infinite linear;
+    color: transparent;
+    text-shadow: 0 0 10px var(--neon-pink);
+}
+@keyframes blurScroll {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 50px; }
+}
+
+/* CHAMPION REEL (BIGGER) */
+.champion-reel {
+    height: 140px; border-color: var(--neon-yellow);
+}
+.champion-reel .reel-strip { font-size: 45px; color: var(--neon-yellow); text-shadow: 0 0 5px var(--neon-yellow); }
+
+/* --- 5. CONTROLS --- */
+.lever-area { margin-top: 30px; text-align: center; }
+
+#spinBtn {
+    font-family: "Press Start 2P", cursive; font-size: 20px; padding: 20px 40px;
+    color: #000; background: var(--neon-yellow); border: 4px solid #fff;
+    box-shadow: 0 5px 0 #b38b00; cursor: pointer; text-transform: uppercase;
+    transition: all 0.1s; width: 100%; max-width: 400px;
+}
+#spinBtn:hover { transform: translateY(2px); box-shadow: 0 3px 0 #b38b00; background: #ffea00; }
+#spinBtn:active { transform: translateY(5px); box-shadow: 0 0 0 #b38b00; }
+#spinBtn:disabled { background: #333; color: #555; border-color: #555; box-shadow: none; cursor: not-allowed; }
+
+.helper-text { font-size: 14px; color: #666; margin-top: 10px; font-family: "Press Start 2P"; }
+
+/* --- 6. POPUPS --- */
+.arcade-popup {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: #000; border: 4px solid var(--neon-pink); padding: 30px;
+    z-index: 1000; width: 90%; max-width: 450px;
+    box-shadow: 10px 10px 0 rgba(0,0,0,0.5); display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+}
+.popup-msg { font-size: 18px; line-height: 1.5; margin-bottom: 20px; color: #fff; font-family: "VT323", monospace; }
+
+/* --- 7. MISC --- */
+.coin-slot {
+    width: 20px; height: 60px; background: #000; border: 2px solid #555; margin: 0 auto 20px; border-radius: 10px;
+}
+.led {
+    width: 10px; height: 10px; background: #333; border-radius: 50%; display: inline-block; margin: 0 5px;
+    box-shadow: 0 0 2px #000;
+}
+.led.on { background: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); }
+.led.ready { background: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); }
+
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <a href="index.html">HOME</a>
+  <a href="predict.html">PLAY</a>
+  <a href="jackpot.html" class="active">JACKPOT</a>
+  <a href="scores.html">SCORES</a>
+</div>  
+
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="glitch" data-text="THE JACKPOT">THE JACKPOT</h1>
+        <div class="hero-sub">FINAL ROUND: SEMIS & FINALS</div>
+    </div>
+</div>
+
+<div class="machine-casing">
+    <div class="machine-header">
+        <span class="led on"></span> PREDICTION TERMINAL <span class="led on"></span>
+    </div>
+
+    <div class="reels-row">
+        <div class="reel-group">
+            <div class="reel-label">SEMI FINAL A</div>
+            <div class="reel-window" id="reel-sf1" onclick="spinReel('sf1')">
+                <div class="reel-strip" id="text-sf1">???</div>
+            </div>
+            <div class="helper-text" style="font-size:10px; color:#555;">CLICK TO SPIN</div>
+        </div>
+
+        <div class="reel-group">
+            <div class="reel-label">SEMI FINAL B</div>
+            <div class="reel-window" id="reel-sf2" onclick="spinReel('sf2')">
+                <div class="reel-strip" id="text-sf2">???</div>
+            </div>
+            <div class="helper-text" style="font-size:10px; color:#555;">CLICK TO SPIN</div>
+        </div>
+    </div>
+
+    <div class="reels-row">
+        <div class="reel-group">
+            <div class="reel-label" style="color:var(--neon-yellow)">WORLD CHAMPION</div>
+            <div class="reel-window champion-reel" id="reel-winner" onclick="spinReel('winner')">
+                <div class="reel-strip" id="text-winner">LOCKED</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="reels-row">
+        <div class="reel-group">
+            <div class="reel-label">3RD PLACE</div>
+            <div class="reel-window" id="reel-3rd" onclick="spinReel('3rd')">
+                <div class="reel-strip" id="text-3rd">LOCKED</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lever-area">
+        <button id="spinBtn" onclick="submitPicks()">LOCK IT IN</button>
+        <div class="helper-text" id="statusMsg">SET ALL REELS TO PROCEED</div>
+    </div>
+</div>
+
+<div id="resultPopup" class="arcade-popup">
+    <div class="popup-msg" style="text-align:center;">
+        <strong style="color:var(--neon-yellow); font-family:'Press Start 2P'">TICKET PRINTED</strong><br><br>
+        <span id="finalSlip" style="font-size: 24px; line-height: 1.2;"></span>
+    </div>
+    <button onclick="location.reload()" style="font-size:10px; padding:10px;">EXIT TERMINAL</button>
+</div>
+
+<script>
+'use strict';
+
+// 1. DATA CONFIG (The 4 Semi Finalists)
+// In a real app, this comes from a database.
+const TEAMS = {
+    sf1: ["FRANCE 🇫🇷", "BRAZIL 🇧🇷"],
+    sf2: ["ENGLAND 🏴󠁧󠁢󠁥󠁮󠁧󠁿", "ARGENTINA 🇦🇷"]
+};
+
+// 2. STATE MANAGEMENT
+let picks = {
+    sf1: null, // Index of selected team in sf1 array (0 or 1)
+    sf2: null, // Index of selected team in sf2 array (0 or 1)
+    winner: null, // 'sf1' or 'sf2' (Which side of the bracket wins?)
+    third: null   // 'sf1' or 'sf2' (Which side of the bracket wins 3rd?)
+};
+
+// 3. REEL LOGIC
+function spinReel(reelId) {
+    const el = document.getElementById(`reel-${reelId}`);
+    const textEl = document.getElementById(`text-${reelId}`);
+    
+    // VISUAL EFFECT (The Spin)
+    if(el.classList.contains('spinning')) return; // Prevent double click
+    el.classList.add('spinning');
+    textEl.textContent = ""; // Clear text during spin
+
+    // SOUND EFFECT (Optional placeholder)
+    // playSlotSound();
+
+    setTimeout(() => {
+        el.classList.remove('spinning');
+        updateState(reelId);
+        updateUI();
+    }, 250); // Spin duration (ms)
+}
+
+function updateState(reelId) {
+    // Logic to toggle picks
+    if (reelId === 'sf1') {
+        picks.sf1 = (picks.sf1 === null || picks.sf1 === 1) ? 0 : 1;
+        // Reset downstream picks if upstream changes logic
+        // But for arcade fun, let's keep them and just update the text
+    } else if (reelId === 'sf2') {
+        picks.sf2 = (picks.sf2 === null || picks.sf2 === 1) ? 0 : 1;
+    } else if (reelId === 'winner') {
+        if(picks.sf1 === null || picks.sf2 === null) return; // Locked
+        // Toggle between the SF1 winner and SF2 winner
+        picks.winner = (picks.winner === 'sf1') ? 'sf2' : 'sf1';
+    } else if (reelId === '3rd') {
+        if(picks.sf1 === null || picks.sf2 === null) return; // Locked
+        // Toggle between the SF1 loser and SF2 loser
+        picks.third = (picks.third === 'sf1') ? 'sf2' : 'sf1';
+    }
+}
+
+function updateUI() {
+    // Update Semi Finals
+    if(picks.sf1 !== null) document.getElementById('text-sf1').textContent = TEAMS.sf1[picks.sf1];
+    else document.getElementById('text-sf1').textContent = "???";
+
+    if(picks.sf2 !== null) document.getElementById('text-sf2').textContent = TEAMS.sf2[picks.sf2];
+    else document.getElementById('text-sf2').textContent = "???";
+
+    // Update Winner Reel logic
+    const winnerEl = document.getElementById('reel-winner');
+    const winnerText = document.getElementById('text-winner');
+    
+    if(picks.sf1 !== null && picks.sf2 !== null) {
+        winnerEl.style.borderColor = "var(--neon-yellow)";
+        if(picks.winner) {
+            // Get the name. If winner is from SF1 bracket, pick the SF1 winner name.
+            const wName = picks.winner === 'sf1' ? TEAMS.sf1[picks.sf1] : TEAMS.sf2[picks.sf2];
+            winnerText.textContent = wName;
+        } else {
+            winnerText.textContent = "SPIN TO PICK";
+        }
+    } else {
+        winnerEl.style.borderColor = "#444";
+        winnerText.textContent = "LOCKED";
+    }
+
+    // Update 3rd Place Reel logic
+    const thirdEl = document.getElementById('reel-3rd');
+    const thirdText = document.getElementById('text-3rd');
+
+    if(picks.sf1 !== null && picks.sf2 !== null) {
+        thirdEl.style.borderColor = "var(--neon-cyan)";
+        if(picks.third) {
+            // Logic: If picks.third is 'sf1', it means the LOSER of SF1 wins 3rd place?
+            // Actually, usually you pick the winner of the 3rd place match.
+            // The 3rd place match is Loser SF1 vs Loser SF2.
+            
+            const loserSF1 = TEAMS.sf1[picks.sf1 === 0 ? 1 : 0];
+            const loserSF2 = TEAMS.sf2[picks.sf2 === 0 ? 1 : 0];
+            
+            const tName = picks.third === 'sf1' ? loserSF1 : loserSF2;
+            thirdText.textContent = tName;
+        } else {
+            thirdText.textContent = "SPIN TO PICK";
+        }
+    } else {
+        thirdEl.style.borderColor = "#444";
+        thirdText.textContent = "LOCKED";
+    }
+
+    checkCompletion();
+}
+
+function checkCompletion() {
+    const btn = document.getElementById('spinBtn');
+    const status = document.getElementById('statusMsg');
+    
+    if (picks.sf1 !== null && picks.sf2 !== null && picks.winner && picks.third) {
+        btn.disabled = false;
+        status.textContent = "READY TO LOCK";
+        status.style.color = "var(--neon-yellow)";
+    } else {
+        btn.disabled = true;
+        status.textContent = "SET ALL REELS TO PROCEED";
+        status.style.color = "#666";
+    }
+}
+
+function submitPicks() {
+    const wName = picks.winner === 'sf1' ? TEAMS.sf1[picks.sf1] : TEAMS.sf2[picks.sf2];
+    const slip = document.getElementById('finalSlip');
+    slip.innerHTML = `CHAMPION:<br><span style="color:var(--neon-pink)">${wName}</span>`;
+    
+    document.getElementById('resultPopup').style.display = 'flex';
+}
+
+// Initial Render
+updateUI();
+
+</script>
+</body>
+</html>
+
