@@ -1,3 +1,8 @@
+Here is the updated **Rules** page.
+
+I have removed the banner image, increased the desktop font size for better readability, fixed the spacing on the mobile carousel buttons, and updated the footer to match the Home page exactly.
+
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -87,14 +92,10 @@ h1 {
     font-family: "VT323", monospace; font-size: 18px; line-height: 1.6;
     margin-bottom: 25px; color: #fff; max-width: 800px; margin-left: auto; margin-right: auto;
 }
-.banner {
-    max-width: 100%; height: auto; display: block; margin: 0 auto 20px;
-    border: 2px solid #000;
-}
 
 /* --- 5. CAROUSEL & TABS (V2 STYLE) --- */
 .neon-selector {
-    display:flex; gap:10px; justify-content:center; align-items:center; margin-bottom:25px; flex-wrap:wrap;
+    display:flex; gap:15px; row-gap: 15px; justify-content:center; align-items:center; margin-bottom:25px; flex-wrap:wrap; width: 100%;
 }
 .neon-pill {
     padding: 15px 20px;
@@ -165,9 +166,9 @@ h1 {
 
 /* --- 6. FOOTER --- */
 footer {
-    width:100%; max-width:960px; margin:20px 0; padding:20px;
-    border-top: 2px solid var(--neon-cyan);
-    font-family: "Press Start 2P", cursive; font-size: 10px;
+    width:100%; max-width:960px; margin:20px 0; padding:20px; 
+    border-top: 2px solid var(--neon-cyan); font-family: "Press Start 2P", cursive; font-size: 10px;
+    display: flex; flex-direction: column; align-items: center; gap: 15px;
     color: var(--text-main);
 }
 footer a { color: var(--neon-cyan); text-decoration:none; transition:color 0.2s; }
@@ -181,14 +182,16 @@ footer a:hover { color: var(--neon-pink); }
     .nav { gap: 20px; }
     .nav a { font-size: 18px; padding: 20px 10px; }
     h1 { font-size: 24px; padding-bottom: 15px; }
-    .intro-text { font-size: 24px; }
+    
+    /* Bigger, more readable desktop text */
+    .intro-text { font-size: 28px; line-height: 1.6; }
     
     .neon-pill { font-size: 14px; padding: 20px 30px; }
     .rule-block { padding: 30px; }
-    .rule-block h3 { font-size: 16px; }
-    .rule-block p { font-size: 24px; }
+    .rule-block h3 { font-size: 20px; }
+    .rule-block p { font-size: 26px; line-height: 1.6; }
     
-    footer { font-size: 12px; }
+    footer { flex-direction: row; justify-content: center; gap: 40px; font-size: 12px;}
 }
 </style>
 </head>
@@ -211,8 +214,6 @@ footer a:hover { color: var(--neon-pink); }
 
 <div class="panel">
   <h1>HOW TO PLAY</h1>
-  
-  <img src="banner1.jpg" class="banner" alt="GOALSURGE! Banner">
   
   <p class="intro-text">
     The player with the most points at the end of the three rounds will be crowned the champion. Don't worry if you miss a round - there are prizes available for the winners of the individual rounds.
@@ -283,7 +284,10 @@ footer a:hover { color: var(--neon-pink); }
 </div>
 
 <footer>
-  <a href="privacy.html">PRIVACY POLICY</a> | © 2026 GOALSURGE
+    <div class="footer-links">
+        <a href="privacy.html">PRIVACY POLICY</a> | <a href="terms.html">TERMS & CONDITIONS</a> 
+    </div>
+    <div>© 2026 GOALSURGE</div>
 </footer>
 
 <script>
@@ -344,3 +348,5 @@ footer a:hover { color: var(--neon-pink); }
 </script>
 </body>
 </html>
+
+```
