@@ -6,7 +6,7 @@
 <title>GOALSURGE! — RULES</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
-/* --- 1. CORE PALETTE: HOT ARCADE (VERSION 2) --- */
+/* --- 1. CORE PALETTE: HOT ARCADE (VERSION 2 MATCH) --- */
 :root{
   --bg: #0f0e17;          
   --panel: #1a1a2e;       
@@ -36,13 +36,37 @@ body{
     padding-bottom: 60px;
 }
 
-/* --- 2. HERO & GLITCH --- */
+/* --- 2. LAUNCH SCREEN (SHARED STYLES) --- */
+/* (Kept for CSS consistency across pages even if not used here) */
+#launch-screen {
+ position:fixed; inset:0; 
+ background-color: var(--bg);
+ background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+ background-size: 20px 20px;
+ display:flex; flex-direction:column; justify-content:center; align-items:center; 
+ z-index:9999; cursor:pointer;
+}
+
+/* --- 3. NAV (EXACT MATCH TO INDEX) --- */
+.nav {
+  width: 100%; max-width: 960px; display: flex; gap: 10px; padding: 10px; margin-top: 10px;
+  opacity: 1; transition: opacity 0.8s ease;
+}
+.nav a {
+  flex: 1; font-family: "Press Start 2P", cursive; font-size: 10px; padding: 12px 5px;
+  color: var(--neon-cyan); text-decoration: none; background: #111;
+  border: 2px solid var(--neon-cyan); box-shadow: 4px 4px 0px 0px rgba(5, 217, 232, 0.4);
+  text-transform: uppercase; transition: all 0.1s; display: flex; align-items: center; justify-content: center;
+}
+.nav a.active { background: var(--neon-pink); border-color: var(--neon-pink); color: #fff; }
+
+/* --- 4. HERO & GLITCH (EXACT MATCH TO INDEX) --- */
 .hero-section {
     width: 100%; max-width: 960px; padding: 30px 0; margin-bottom: 20px;
     border-bottom: 4px solid var(--neon-cyan);
     background: linear-gradient(180deg, rgba(5, 217, 232, 0) 0%, rgba(5, 217, 232, 0.1) 100%);
     position: relative; overflow: hidden;
-    text-align: center;
+    text-align: center; opacity: 1; transition: opacity 0.8s ease;
 }
 .scanlines {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -61,23 +85,12 @@ body{
     padding: 6px 12px; display: inline-block; box-shadow: 4px 4px 0 #000;
 }
 
-/* --- 3. NAV --- */
-.nav {
-  width: 100%; max-width: 960px; display: flex; gap: 10px; padding: 10px; margin-top: 10px;
-}
-.nav a {
-  flex: 1; font-family: "Press Start 2P", cursive; font-size: 10px; padding: 12px 5px;
-  color: var(--neon-cyan); text-decoration: none; background: #111;
-  border: 2px solid var(--neon-cyan); box-shadow: 4px 4px 0px 0px rgba(5, 217, 232, 0.4);
-  text-transform: uppercase; transition: all 0.1s; display: flex; align-items: center; justify-content: center;
-}
-.nav a.active { background: var(--neon-pink); border-color: var(--neon-pink); color: #fff; }
-
-/* --- 4. PANEL & TYPOGRAPHY --- */
+/* --- 5. PANELS & TYPOGRAPHY --- */
 .panel {
     width: 95%; max-width: 960px; background: var(--panel);
     border: 3px solid var(--neon-cyan); padding: 20px; margin-bottom: 25px;
     box-shadow: 0 0 20px rgba(5, 217, 232, 0.1);
+    opacity: 1; transition: opacity 1s ease;
 }
 h1 {
     font-family: "Press Start 2P", cursive; font-size: 16px; margin-bottom: 20px;
@@ -88,9 +101,10 @@ h1 {
     margin-bottom: 25px; color: #fff; max-width: 800px; margin-left: auto; margin-right: auto;
 }
 
-/* --- 5. CAROUSEL & TABS (V2 STYLE) --- */
+/* --- 6. CAROUSEL & TABS (ENHANCED MOBILE) --- */
 .neon-selector {
-    display:flex; gap:15px; row-gap: 15px; justify-content:center; align-items:center; margin-bottom:25px; flex-wrap:wrap; width: 100%;
+    display:flex; gap:10px; row-gap: 15px; /* Added row-gap for mobile stacking */
+    justify-content:center; align-items:center; margin-bottom:25px; flex-wrap:wrap;
 }
 .neon-pill {
     padding: 15px 20px;
@@ -159,7 +173,7 @@ h1 {
     box-shadow: 0 0 10px var(--neon-cyan);
 }
 
-/* --- 6. FOOTER --- */
+/* --- 7. FOOTER (EXACT MATCH TO INDEX) --- */
 footer {
     width:100%; max-width:960px; margin:20px 0; padding:20px; 
     border-top: 2px solid var(--neon-cyan); font-family: "Press Start 2P", cursive; font-size: 10px;
@@ -171,6 +185,7 @@ footer a:hover { color: var(--neon-pink); }
 
 /* --- DESKTOP ENHANCEMENTS --- */
 @media (min-width: 768px) {
+    /* Exact Match to Index Media Query */
     .hero-section { padding: 50px 0; }
     .glitch { font-size: 64px; }
     .hero-sub { font-size: 14px; padding: 10px 20px; }
@@ -178,12 +193,11 @@ footer a:hover { color: var(--neon-pink); }
     .nav a { font-size: 18px; padding: 20px 10px; }
     h1 { font-size: 24px; padding-bottom: 15px; }
     
-    /* Bigger, more readable desktop text */
-    .intro-text { font-size: 28px; line-height: 1.6; }
-    
+    /* Specific to Rules Page Content - Big Readability */
+    .intro-text { font-size: 24px; line-height: 1.8; }
     .neon-pill { font-size: 14px; padding: 20px 30px; }
     .rule-block { padding: 30px; }
-    .rule-block h3 { font-size: 20px; }
+    .rule-block h3 { font-size: 18px; }
     .rule-block p { font-size: 26px; line-height: 1.6; }
     
     footer { flex-direction: row; justify-content: center; gap: 40px; font-size: 12px;}
@@ -192,14 +206,14 @@ footer a:hover { color: var(--neon-pink); }
 </head>
 <body>
 
-<div class="nav">
+<div class="nav" id="mainNav">
   <a href="index.html">HOME</a>
   <a href="predict.html">PLAY</a>
   <a href="scores.html">SCORES</a>
   <a href="rules.html" class="active">RULES</a>
 </div>
 
-<div class="hero-section">
+<div class="hero-section" id="hero">
     <div class="scanlines"></div>
     <div class="hero-content">
         <h1 class="glitch" data-text="GOALSURGE!">GOALSURGE!</h1>
