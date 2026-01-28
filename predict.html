@@ -225,6 +225,14 @@ input:disabled::placeholder { color: var(--neon-pink); opacity: 0.7; font-size: 
 .player-box.active { background: var(--neon-pink); color: #fff; border-color: #fff; z-index: 5; }
 .player-box.selected { background: var(--neon-yellow); color: #000; border-color: #fff; }
 
+/* LOCKED / DIMMED STATE FOR ROUND 1 */
+.dimmed {
+    opacity: 0.2;
+    pointer-events: none;
+    filter: grayscale(100%);
+    transition: all 0.5s ease;
+}
+
 /* --- DESKTOP ENHANCEMENTS (NEW CODE) --- */
 @media (min-width: 768px) {
     /* Navigation - make readable */
@@ -266,7 +274,7 @@ input:disabled::placeholder { color: var(--neon-pink); opacity: 0.7; font-size: 
     <div class="scanlines"></div>
     <div class="hero-content">
         <h1 class="glitch" data-text="GOALSURGE!">GOALSURGE!</h1>
-        <div class="hero-sub">WORLD CUP 2026</div>
+        <div class="hero-sub">ROUND 1 - GROUP STAGE</div>
     </div>
 </div>
 
@@ -291,7 +299,7 @@ input:disabled::placeholder { color: var(--neon-pink); opacity: 0.7; font-size: 
     <h1>PLAYER INFO</h1>
     
     <input id="username" placeholder="USERNAME (REQUIRED)">
-    <input id="email" placeholder="ENTER USERNAME FIRST" disabled>
+    <input id="email" placeholder="EMAIL ADDRESS (REQUIRED)">
     <input id="leaguePin" placeholder="LEAGUE PIN (OPTIONAL)" maxlength="4">
 
     <div class="terms-container">
@@ -305,25 +313,26 @@ input:disabled::placeholder { color: var(--neon-pink); opacity: 0.7; font-size: 
 <div class="panel">
     <h1>ROUND 1: GROUP STAGE</h1>
     
-    <div class="sys intro">PICKING 1ST PLACE IS TOO EASY.</div>
-    <div class="sys" style="color:#fff; margin-bottom: 20px; font-size: 16px;">
-        SELECT <span style="color:var(--neon-cyan)">2ND PLACE</span> & <a href="#" id="rulesLink" style="color:var(--neon-pink); text-decoration: underline;">8 THIRD-PLACE QUALIFIERS</a>
+    <div id="round1Container" class="dimmed">
+        <button id="comboTrigger" style="width:100%;">CHOOSE SCORER DUO</button>
+        <select id="combo" style="display:none;">
+            <option value="">SELECT SCORER DUO</option>
+            <option>Messi & Ronaldo</option>
+            <option>Neymar & Mbappé</option>
+            <option>Lewandowski & Haaland</option>
+            <option>Salah & Mané</option>
+            <option>Kane & Sterling</option>
+            <option>Vinícius & Pedri</option>
+        </select>
+
+        <input id="goals" placeholder="TOTAL GOALS (TIEBREAKER)" type="number">
+        
+        <div style="font-family:'VT323'; font-size:22px; color:var(--text-main); margin: 20px 0; text-transform:uppercase;">
+            PICKING 1ST PLACE IS TOO EASY. SELECT 2ND PLACE & 8 THIRD-PLACE QUALIFIERS
+        </div>
+
+        <div class="groups-grid" id="groupsGrid"></div>
     </div>
-
-    <button id="comboTrigger" style="width:100%;" disabled>COMPLETE USER INFO FIRST</button>
-    <select id="combo" style="display:none;" disabled>
-        <option value="">SELECT SCORER DUO</option>
-        <option>Messi & Ronaldo</option>
-        <option>Neymar & Mbappé</option>
-        <option>Lewandowski & Haaland</option>
-        <option>Salah & Mané</option>
-        <option>Kane & Sterling</option>
-        <option>Vinícius & Pedri</option>
-    </select>
-
-    <input id="goals" placeholder="SELECT SCORER DUO FIRST" type="number" disabled>
-    
-    <div class="groups-grid" id="groupsGrid"></div>
 </div> 
 
 <button id="lockBtn" style="width: 100%; max-width: 600px; font-size: 18px;" disabled>LOCK PICKS & BONUS ROUND</button>
@@ -401,7 +410,8 @@ comboSelect=document.getElementById('combo'),
 comboTrigger=document.getElementById('comboTrigger'),
 goalsInput=document.getElementById('goals'),
 s1msg=document.getElementById('s1msg'),
-lockBtn=document.getElementById('lockBtn');
+lockBtn=document.getElementById('lockBtn'),
+round1Container=document.getElementById('round1Container');
 
 /* ---------- TOOLTIPS ---------- */
 const infoTooltip = document.getElementById('infoTooltip');
@@ -431,49 +441,14 @@ function updateTerminalState() {
     // 1. Identity
     const isIdentityComplete = isNameValid && isEmailValid && areTermsChecked;
 
-    if (!isNameValid) {
-        emailInput.disabled = true;
-        emailInput.placeholder = "ENTER USERNAME FIRST";
+    if (!isIdentityComplete) {
         s1msg.textContent = "AWAITING CREDENTIALS...";
         s1msg.className = "sys";
+        round1Container.classList.add('dimmed');
     } else {
-        emailInput.disabled = false;
-        emailInput.placeholder = "EMAIL ADDRESS";
-        if (!isEmailValid) {
-            s1msg.textContent = "ERROR: INVALID EMAIL FORMAT";
-            s1msg.className = "sys active";
-        } else if (!areTermsChecked) {
-             s1msg.textContent = "REQUIRED: ACCEPT TERMS TO PROCEED";
-             s1msg.className = "sys active";
-        } else {
-             s1msg.textContent = "ACCESS GRANTED. SYSTEM UNLOCKED.";
-             s1msg.className = "sys complete";
-        }
-    }
-
-    // 2. Prediction Inputs
-    if (!isIdentityComplete) {
-        comboTrigger.disabled = true;
-        comboTrigger.textContent = "COMPLETE USER INFO FIRST";
-        comboSelect.disabled = true;
-        goalsInput.disabled = true;
-        goalsInput.placeholder = "COMPLETE USER INFO FIRST";
-    } else {
-        if(comboSelect.style.display === 'none'){
-            comboTrigger.disabled = false;
-            comboTrigger.textContent = "CHOOSE SCORER DUO";
-        } else {
-             comboSelect.disabled = false;
-        }
-        const isComboSelected = comboSelect.value !== "";
-        
-        if (!isComboSelected) {
-            goalsInput.disabled = true;
-            goalsInput.placeholder = "SELECT DUO FIRST";
-        } else {
-            goalsInput.disabled = false;
-            goalsInput.placeholder = "TOTAL GOALS (TIEBREAKER)";
-        }
+        s1msg.textContent = "ACCESS GRANTED. SYSTEM UNLOCKED.";
+        s1msg.className = "sys complete";
+        round1Container.classList.remove('dimmed');
     }
 
     // 3. Lock Button
@@ -710,5 +685,6 @@ function showFinalSummary() {
 }
 
 renderGroups();
+updateTerminalState(); // Run once on load to set initial disabled state
 </script> </body>
 </html>
